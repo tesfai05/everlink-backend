@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registration Form</title>
+        <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #007BFF;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .button-group button {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 20px;
+      font-size: 14px;
+      background-color: #516e8e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-group button:hover {
+      background-color: #057ef8;
+    }
+
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .button-group button {
+        width: 100%;
+      }
+    }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="header"></div>
+            <h2>Registration Form</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name:</label>
+                    <input
+                        type="text"
+                        id="fullName"
+                        name="fullName"
+                        required
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="martialStatus">Martial Status:</label>
+                    <select id="martialStatus" name="martialStatus" required>
+                        <option value="">-- Select --</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="joinDate">Join Date:</label>
+                    <input type="date" id="joinDate" name="joinDate">
+                </div>
+                <div class="form-group">
+                    <label for="joinDate">Email Address:</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                    >
+                </div>
+                <div class="button-group">
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+            <div id="footer"></div>
+        </div>
+        <script>
+            document.getElementById("registerForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const rawDate = document.getElementById("joinDate").value; 
+            let formattedDate = null;
+                if(rawDate){
+                    const [year, month, day] = rawDate.split("-");
+                    formattedDate = `${month}/${day}/${year}`;
+                }
+
+            const member = {
+                fullName: document.getElementById("fullName").value,
+                martialStatus: document.getElementById("martialStatus").value,
+                joinDate: formattedDate,
+                email: document.getElementById("email")
+            };
+
+            fetch("/api/v1/members/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(member)
+            })
+            .then(res => {
+                if (res.ok) {
+                window.location.href = "list.html";
+                } else {
+                alert("Registration failed. Please check your input.");
+                }
+            })
+            .catch(() => alert("Error connecting to the server."));
+            });
+            // Inject header
+            fetch("header.html")
+                .then(res => res.text())
+                .then(data => document.getElementById("header").innerHTML = data);
+        
+            // Inject footer
+            fetch("footer.html")
+                .then(res => res.text())
+                .then(data => document.getElementById("footer").innerHTML = data);
+        </script>
+    </body>
+</html>

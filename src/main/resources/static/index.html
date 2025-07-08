@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Welcome Page</title>
+        <style>
+            body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            margin: 0;
+            }
+
+            .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h1, h2 {
+            text-align: center;
+            color: #007BFF;
+            }
+
+            hr {
+            margin: 30px 0;
+            }
+
+            img {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 180px;
+            }
+
+            .policy {
+            text-align: left;
+            padding: 20px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            }
+
+            .heads {
+            color: #007BFF;
+            font-weight: bold;
+            margin-top: 25px;
+            }
+
+            ul {
+            padding-left: 20px;
+            }
+
+            ul li {
+            margin-bottom: 10px;
+            }
+
+            .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            }
+
+            .button-group button {
+            padding: 12px 20px;
+            font-size: 14px;
+            background-color: #516e8e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            }
+
+            .button-group button:hover {
+            background-color: #057ef8;
+            }
+
+            @media screen and (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .policy {
+                padding: 15px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .button-group button {
+                width: 100%;
+                max-width: 280px;
+            }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="header"></div>
+            <h1>Welcome to EverLink Holding LLC</h1>
+            <img src="co_img.png" alt="Company Logo">
+            <hr>
+            <div class="policy">
+                <h2>EverLink Holding Members Policy</h2>
+                <p class="heads">Membership Eligibility & Legacy Pool</p>
+                <ul>
+                    <li>
+                        <b>Effective Date:</b>
+                        Contributions began July 1, 2020.
+                    </li>
+                    <li>
+                        Registration requirement:
+                        <ul>
+                            <li>Payment of the registration fee.</li>
+                            <li>At least three months of membership payments paid in advance.</li>
+                            <li>Married : $210 + $90, Single: $140 + $60</li>
+                        </ul>
+                    </li>
+                    <li>Member qualifies for the legacy pool only if officially registered on the exit date of the departing member.</li>
+                </ul>
+                <p class="heads">Martial Status & Ownership</p>
+                <ul>
+                    <li>Only two martial statuses are recognized as of now: Married or Single.</li>
+                    <li>
+                        Ownership percentage depends on:
+                        <ul>
+                            <li>Official join date.</li>
+                            <li>Martial status.</li>
+                            <li>Legacy pool amount.</li>
+                        </ul>
+                    </li>
+                    <li>Married members own and contribute 1.5 times the share of single members.</li>
+                    <li>Couples treated as a single member with ownship and contribution of 1.5 times of single.</li>
+                </ul>
+                <p class="heads">Membership Payment & Join Date Rules</p>
+                <ul>
+                    <li>Membership payments must be fully up to date to remain eligible for any benefits.</li>
+                    <li>New members may choose a backdated join date as early as July 1, 2020, provided all required membership payments for the selected period have been paid in full.</li>
+                    <ul>
+                        <li>If July 1, 2020 is selected as the join date, the registration fee will be waived.</li>
+                    </ul>
+                    <li>For consistency, all join dates and martial status changes are recorded as the first day of the month following the qualification or event.</li>
+                </ul>
+                <p class="heads">Martial Status Changes</p>
+                <ul>
+                    <li>If a Single member gets married, their status must change to married starting from the first day of the month following the marriage. Monthly contributions will increase to the Married rate (1.5× the Single rate) from that month onward.</li>
+                    <li>If a Married member becomes single (e.g., through divorce or separation), changing their status to Single starting from the first day of the month following the status change is optional. If chosen, monthly contributions will decrease to the Single rate. Note: this will affect ownership percentage.</li>
+                </ul>
+                <p class="heads">Exit & Payment Rules</p>
+                <ul>
+                    <li>
+                        Leave dates are recorded as:
+                        <ul>
+                            <li>The first day of the current month if membership payments are up to date.</li>
+                            <li>Otherwise, the first day of the month following the last covered payment.</li>
+                        </ul>
+                    </li>
+                    <li>Upon exiting, all membership and associated payments are non-refundable. Any pending asset allocations will be suspended and reallocated to active members.</li>
+                </ul>
+            </div>
+            <div class="button-group">
+                <button onclick="window.location.href='register.html'">Register</button>
+                <button onclick="window.location.href='list.html'">Members</button>
+            </div>
+            <div id="footer"></div>
+        </div>
+        <script>
+            // Inject header
+            fetch("header.html")
+              .then(res => res.text())
+              .then(data => document.getElementById("header").innerHTML = data);
+          
+            // Inject footer
+            fetch("footer.html")
+              .then(res => res.text())
+              .then(data => document.getElementById("footer").innerHTML = data);
+        </script>
+    </body>
+</html>
