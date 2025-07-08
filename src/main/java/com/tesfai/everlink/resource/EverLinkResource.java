@@ -117,4 +117,9 @@ public class EverLinkResource {
         emailService.sendEmailToMembers(emailDTO.getSubject(), emailDTO.getBody());
         return "Email sent to members";
     }
+
+    @GetMapping("/health-check")
+    public String  healthCheck(){
+        return "APPISUPNOW";
+    }
 }
