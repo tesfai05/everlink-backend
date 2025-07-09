@@ -113,7 +113,7 @@
                     <input type="date" id="joinDate" name="joinDate">
                 </div>
                 <div class="form-group">
-                    <label for="joinDate">Email Address:</label>
+                    <label for="email">Email Address:</label>
                     <input
                         type="email"
                         id="email"
@@ -142,7 +142,7 @@
                 fullName: document.getElementById("fullName").value,
                 martialStatus: document.getElementById("martialStatus").value,
                 joinDate: formattedDate,
-                email: document.getElementById("email")
+                email: document.getElementById("email").value
             };
 
             fetch("/api/v1/members/register", {
