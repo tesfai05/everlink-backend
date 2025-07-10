@@ -165,7 +165,10 @@ public class EverLinkServiceImpl implements IEverLinkService{
 
         double totalWeight = everLinkRepository.findAll().stream()
                 .filter(m -> m.getMembershipStatus().equalsIgnoreCase(MembershipEnum.Active.name())
-                        && !EverLinkUtils.isAfter(EverLinkUtils.fromString(m.getJoinDate()), endDate))
+                        && !(EverLinkUtils.isAfter(EverLinkUtils.fromString(m.getJoinDate()), endDate)
+                                || EverLinkUtils.fromString(m.getJoinDate()).isEqual(endDate)
+                            )
+                        )
                 .map(m -> {
                     LocalDate joinDate = EverLinkUtils.fromString(m.getJoinDate());
                     long months = EverLinkUtils.monthsBetweenDates(joinDate, LocalDate.now());
