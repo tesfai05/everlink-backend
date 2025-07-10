@@ -10,7 +10,8 @@
 	</parent>
 	<groupId>com.tesfai</groupId>
 	<artifactId>EverLink-LLC</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
 	<name>EverLink-LLC</name>
 	<description>Spring Boot for EverLink LLC</description>
 	<url/>
