@@ -183,13 +183,13 @@
                     <td>${member.leaveDate || "-"}</td>
                     <td>${member.membershipStatus}</td>
                     <td>${member.totalContribution}</td>
-                    <td>${member.totalPreviousLegacyPool || "-"}</td>
+                    <td>${member.totalPreviousLegacyPool || "0.0"}</td>
                     <td>${member.percentageOfOwnership}</td>
                     <td>${member.statusChangeDate || "-"}</td>
                     <td>${member.statusChanged ? "Yes" : "No"}</td>
                     <td>
                     <button class="edit" onclick="editMember('${member.memberId}')">Edit</button><br/>
-                    <button class="delete" onclick="deleteMember('${member.memberId}')">Delete</button>
+                    <!--<button class="delete" onclick="deleteMember('${member.memberId}')">Delete</button>-->
                     </td>
                 </tr>`;
                 tbody.innerHTML += row;

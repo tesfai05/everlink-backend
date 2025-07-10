@@ -180,7 +180,9 @@ public class EverLinkServiceImpl implements IEverLinkService{
 
         everLinkRepository.findAll().stream()
                 .filter(m->m.getMembershipStatus().equalsIgnoreCase(MembershipEnum.Active.name())
-                    && !EverLinkUtils.isAfter(EverLinkUtils.fromString(m.getJoinDate()), EverLinkUtils.fromString(leaveDate)))
+                    && !(EverLinkUtils.isAfter(EverLinkUtils.fromString(m.getJoinDate()), endDate)
+                        || EverLinkUtils.fromString(m.getJoinDate()).isEqual(endDate)
+                ))
                 .peek(m->{
                     Double lp =0.0;
                     int monthsOfMember = EverLinkUtils.monthsBetweenDates(EverLinkUtils.fromString(m.getJoinDate()), LocalDate.now());
