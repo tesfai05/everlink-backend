@@ -43,7 +43,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
         String memberId = generateMemberId(memberDTO);
         memberDTO.setMemberId(memberId);
         Member member = everLinkMapper.mapToEntity(memberDTO);
-        Double mc = member.getMartialStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())? EverLinkConstants.MEMBER_CONTRIBUTION_MARRIED:EverLinkConstants.MEMBER_CONTRIBUTION_SINGLE;
+        Double mc = member.getMaritalStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())? EverLinkConstants.MEMBER_CONTRIBUTION_MARRIED:EverLinkConstants.MEMBER_CONTRIBUTION_SINGLE;
         member.setCurrentMonthlyContribution(mc);
         String joinDate = memberDTO.getJoinDate()!=null?memberDTO.getJoinDate():EverLinkUtils.toString(LocalDate.now());
         member.setJoinDate(joinDate);
@@ -70,7 +70,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
         if(memberFromDb.isPresent()) {
             Member member = memberFromDb.get();
             lp = member.getTotalPreviousLegacyPool()==null?0.0:member.getTotalPreviousLegacyPool();
-            boolean statusNotChanged = member.getMartialStatus().equalsIgnoreCase(memberDTO.getMartialStatus());
+            boolean statusNotChanged = member.getMaritalStatus().equalsIgnoreCase(memberDTO.getMaritalStatus());
             if(!statusNotChanged && StringUtils.isBlank(memberDTO.getLeaveDate())){
                 member.setPreviousMonthlyContribution(member.getCurrentMonthlyContribution());
                 String changeDate = memberDTO.getStatusChangeDate()==null?EverLinkUtils.toString(LocalDate.now()):memberDTO.getStatusChangeDate();
@@ -172,7 +172,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
                 .map(m -> {
                     LocalDate joinDate = EverLinkUtils.fromString(m.getJoinDate());
                     long months = EverLinkUtils.monthsBetweenDates(joinDate, LocalDate.now());
-                    double factor = m.getMartialStatus().equalsIgnoreCase(MartialStatusEnum.Married.name()) ? 1.5 : 1.0;
+                    double factor = m.getMaritalStatus().equalsIgnoreCase(MartialStatusEnum.Married.name()) ? 1.5 : 1.0;
                     return months * factor;
                 })
                 .reduce(0.0, Double::sum);
@@ -187,7 +187,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
                     Double lp =0.0;
                     int monthsOfMember = EverLinkUtils.monthsBetweenDates(EverLinkUtils.fromString(m.getJoinDate()), LocalDate.now());
                     Double ratio ;
-                    if(m.getMartialStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())){
+                    if(m.getMaritalStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())){
                         ratio = (1.5*monthsOfMember)/totalWeight;
                         Double lpm = ratio*tc;
                         lp = m.getTotalPreviousLegacyPool()==null?0.0:m.getTotalPreviousLegacyPool()+lpm;

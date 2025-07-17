@@ -39,9 +39,9 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         if(StringUtils.isNotBlank(memberDTO.getEmail())){
             member.setEmail(memberDTO.getEmail());
         }
-        if(StringUtils.isNotBlank(memberDTO.getMartialStatus())){
-            member.setMartialStatus(memberDTO.getMartialStatus());
-            Double mc = member.getMartialStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())? EverLinkConstants.MEMBER_CONTRIBUTION_MARRIED:EverLinkConstants.MEMBER_CONTRIBUTION_SINGLE;
+        if(StringUtils.isNotBlank(memberDTO.getMaritalStatus())){
+            member.setMaritalStatus(memberDTO.getMaritalStatus());
+            Double mc = member.getMaritalStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())? EverLinkConstants.MEMBER_CONTRIBUTION_MARRIED:EverLinkConstants.MEMBER_CONTRIBUTION_SINGLE;
             member.setCurrentMonthlyContribution(mc);
         }
         if(StringUtils.isNotBlank(memberDTO.getMembershipStatus())){
@@ -72,7 +72,7 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         member.setEmail(memberDTO.getEmail());
         member.setJoinDate(memberDTO.getJoinDate());
         member.setLeaveDate(memberDTO.getLeaveDate());
-        member.setMartialStatus(memberDTO.getMartialStatus());
+        member.setMaritalStatus(memberDTO.getMaritalStatus());
         member.setMembershipStatus(memberDTO.getMembershipStatus());
         return member;
     }
@@ -83,7 +83,7 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         memberDTO.setEmail(member.getEmail());
         memberDTO.setJoinDate(member.getJoinDate());
         memberDTO.setLeaveDate(member.getLeaveDate());
-        memberDTO.setMartialStatus(member.getMartialStatus());
+        memberDTO.setMaritalStatus(member.getMaritalStatus());
         memberDTO.setMembershipStatus(member.getMembershipStatus());
         memberDTO.setTotalContribution(member.getTotalContribution());
         memberDTO.setTotalPreviousLegacyPool(member.getTotalPreviousLegacyPool());

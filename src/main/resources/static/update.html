@@ -95,8 +95,8 @@
                     <input type="text" id="fullName" name="fullName">
                 </div>
                 <div class="form-group">
-                    <label for="martialStatus">Marital Status:</label>
-                    <select id="martialStatus" name="martialStatus">
+                    <label for="maritalStatus">Marital Status:</label>
+                    <select id="maritalStatus" name="maritalStatus">
                         <option value="">-- Select --</option>
                         <option value="Single">Single</option>
                         <option value="Married">Married</option>
@@ -138,7 +138,7 @@
                 memberId = member.memberId;
 
                 document.getElementById("fullName").value = member.fullName || "";
-                document.getElementById("martialStatus").value = member.martialStatus || "";
+                document.getElementById("maritalStatus").value = member.martialStatus || "";
                 document.getElementById("email").value = member.email || "";
 
                 document.getElementById("joinDate").value = toInputDateFormat(member.joinDate);
@@ -161,7 +161,7 @@
             const updatedMember = {
                 memberId: memberId,
                 fullName: document.getElementById("fullName").value,
-                martialStatus: document.getElementById("martialStatus").value,
+                martialStatus: document.getElementById("maritalStatus").value,
                 email: document.getElementById("email").value,
                 joinDate: formatDate(rawJoinDate),
                 leaveDate: formatDate(rawLeaveDate),

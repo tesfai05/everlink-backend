@@ -10,7 +10,7 @@ public class Member {
     @Column(unique = true)
     private String memberId;
     private String fullName;
-    private String martialStatus;
+    private String maritalStatus;
     private String email;
     private String joinDate;
     private String leaveDate;
@@ -50,12 +50,12 @@ public class Member {
         this.fullName = fullName;
     }
 
-    public String getMartialStatus() {
-        return martialStatus;
+    public String getMaritalStatus() {
+        return maritalStatus;
     }
 
-    public void setMartialStatus(String martialStatus) {
-        this.martialStatus = martialStatus;
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 
     public String getEmail() {
