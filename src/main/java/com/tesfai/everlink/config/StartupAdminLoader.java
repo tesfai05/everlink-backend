@@ -25,7 +25,9 @@ public class StartupAdminLoader {
             boolean adminExists = userRepository
                     .findAll()
                     .stream()
+                    .filter(user -> user!=null)
                     .map(user -> user.getRoles())
+                    .filter(roles->roles!=null && roles.size()>0)
                     .flatMap(u->u.stream().map(us->us.getName()))
                     .anyMatch(user -> "ADMIN".equalsIgnoreCase(user));
 
