@@ -146,7 +146,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
             List<MemberDTO> memberDTOList = everLinkMapper.mapToDto(List.of(member.get()));
             return memberDTOList.get(0);
         }
-        return null;
+        return new MemberDTO();
     }
 
     @Override

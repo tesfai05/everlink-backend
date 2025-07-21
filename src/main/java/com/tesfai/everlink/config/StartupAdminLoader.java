@@ -12,9 +12,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Configuration
 public class StartupAdminLoader {
+    private final Logger LOG = Logger.getLogger("StartupAdminLoader");
     @Value(value = "${admin.username}")
     private String adminUsername;
     @Value(value = "${admin.password}")
@@ -41,8 +43,7 @@ public class StartupAdminLoader {
                 )
             """);
 
-
-
+            LOG.info("ADMIN & USER role name inserted.");
             boolean adminExists = userRepository
                     .findAll()
                     .stream()
@@ -53,6 +54,7 @@ public class StartupAdminLoader {
                     .anyMatch(user -> "ADMIN".equalsIgnoreCase(user));
 
             if (!adminExists) {
+                LOG.info("About to insert admin.");
                 User admin = new User();
                 admin.setUsername(adminUsername);
                 admin.setPassword(passwordEncoder.encode(adminPassword));
@@ -60,7 +62,9 @@ public class StartupAdminLoader {
                         .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
                 admin.setRoles(Set.of(userRole));
                 admin.setMemberId("AD123");
+                admin.setEnabled(true);
                 userRepository.save(admin);
+                LOG.info(admin.getUsername() + " admin inserted.");
             }
         };
     }
