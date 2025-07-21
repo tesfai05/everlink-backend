@@ -27,7 +27,7 @@ public class StartupAdminLoader {
                     .stream()
                     .map(user -> user.getRoles())
                     .flatMap(u->u.stream().map(us->us.getName()))
-                    .anyMatch(user -> user.equalsIgnoreCase("ADMIN"));
+                    .anyMatch(user -> "ADMIN".equalsIgnoreCase(user));
 
             if (!adminExists) {
                 User admin = new User();
