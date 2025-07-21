@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
@@ -20,8 +21,28 @@ public class StartupAdminLoader {
     private String adminPassword;
 
     @Bean
-    public CommandLineRunner loadDefaultAdmin(IUserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository) {
+    public CommandLineRunner loadDefaultAdmin(IUserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository, JdbcTemplate jdbcTemplate) {
         return args -> {
+            // Insert ADMIN if it doesn't exist
+            jdbcTemplate.update("""
+                INSERT INTO everlinkllc.roles (name)
+                SELECT 'ADMIN'
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM everlinkllc.roles WHERE name = 'ADMIN'
+                )
+            """);
+
+            // Insert USER if it doesn't exist
+            jdbcTemplate.update("""
+                INSERT INTO everlinkllc.roles (name)
+                SELECT 'USER'
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM everlinkllc.roles WHERE name = 'USER'
+                )
+            """);
+
+
+
             boolean adminExists = userRepository
                     .findAll()
                     .stream()
@@ -38,6 +59,7 @@ public class StartupAdminLoader {
                 Role userRole = roleRepository.findByName("ADMIN")
                         .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
                 admin.setRoles(Set.of(userRole));
+                admin.setMemberId("AD123");
                 userRepository.save(admin);
             }
         };
