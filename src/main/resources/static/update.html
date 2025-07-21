@@ -87,8 +87,21 @@
     </head>
     <body>
         <div class="container">
-            <div id="header"></div>
-            <h2>Edit Member Details</h2>
+            <div class="site-header">
+                <nav id="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="signup.html">Signup</a>
+                    <a href="signin.html">Login</a>
+                    <a href="memberDetails.html">Profile</a>
+                    <a href="register.html">Register</a>
+                    <a href="list.html">Members</a>
+                    <a href="email.html">Send Notification</a>
+                    <a href="admin.html">Make Admin</a>
+                    <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
+                </nav>
+                <hr>
+            </div>
+            <h2>Update EverLink Holding Member Details</h2>
             <form id="memberForm">
                 <div class="form-group">
                     <label for="fullName">Full Name:</label>
@@ -124,6 +137,63 @@
             <div id="footer"></div>
         </div>
         <script>
+            const user = JSON.parse(localStorage.getItem("user"));
+            const nav = document.getElementById("main-nav");
+            const links = Array.from(nav.querySelectorAll("a"));
+
+            // Define restricted links by role
+            const restrictedForNone = ["register.html", "list.html", "email.html", "admin.html", "memberDetails.html"];
+            const restrictedForUser = ["register.html", "list.html", "email.html", "admin.html", "signup.html", "signin.html"];
+            const restrictedForAdmin = ["signup.html", "signin.html"];
+
+            // Hide links based on role
+            if (user === null) {
+                links.forEach(link => {
+                    if (restrictedForNone.some(r => link.href.includes(r))) {
+                        link.style.display = "none";
+                    }
+                });
+            } else if (user?.roles[0].name === 'USER') {
+                links.forEach(link => {
+                    if (restrictedForUser.some(r => link.href.includes(r))) {
+                        link.style.display = "none";
+                    }
+                });
+            } else if (user?.roles[0].name === 'ADMIN') {
+                links.forEach(link => {
+                    if (restrictedForAdmin.some(r => link.href.includes(r))) {
+                        link.style.display = "none";
+                    }
+                });
+            }
+            if (user?.roles?.[0]?.name === 'USER' || user?.roles?.[0]?.name === 'ADMIN') {
+                document.getElementById("logout-link").style.display = "inline";
+            } else {
+                document.getElementById("logout-link").style.display = "none";
+            }
+
+            // Add separator (|) between visible links
+            const visibleLinks = links.filter(link => link.style.display !== "none");
+            nav.innerHTML = ''; // clear nav
+
+            visibleLinks.forEach((link, index) => {
+                nav.appendChild(link);
+                if (index < visibleLinks.length - 1) {
+                    const separator = document.createTextNode(" | ");
+                    nav.appendChild(separator);
+                }
+            });
+
+            function logout() {
+                fetch("/api/v1/members/logout", {
+                    method: "POST",
+                    credentials: "include"
+                }).then(() => {
+                    localStorage.removeItem("user"); // Clear user info from localStorage
+                    window.location.href = "index.html"; // Redirect to home
+                }).catch(err => console.error("Logout failed:", err));
+            }
+
             const memberData = localStorage.getItem("editMember");
             let memberId = null;
 
@@ -171,6 +241,7 @@
             fetch(`/api/v1/members/update/${memberId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify(updatedMember)
             })
             .then(res => {
@@ -190,11 +261,6 @@
                 });
             });
 
-            // Inject header
-            fetch("header.html")
-                .then(res => res.text())
-                .then(data => document.getElementById("header").innerHTML = data);
-        
             // Inject footer
             fetch("footer.html")
                 .then(res => res.text())

@@ -88,7 +88,20 @@
     </head>
     <body>
         <div class="container">
-            <div id="header"></div>
+            <div class="site-header">
+                <nav id="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="signup.html">Signup</a>
+                    <a href="signin.html">Login</a>
+                    <a href="memberDetails.html">Profile</a>
+                    <a href="register.html">Register</a>
+                    <a href="list.html">Members</a>
+                    <a href="email.html">Send Notification</a>
+                    <a href="admin.html">Make Admin</a>
+                    <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
+                </nav>
+                <hr>
+            </div>
             <h2>Notification Form</h2>
             <form id="notificationForm">
                 <div class="form-group">
@@ -115,7 +128,70 @@
             </form>
             <div id="footer"></div>
         </div>
+        <!-- Error Modal -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeErrorModal()">&times;</span>
+                <p id="errorMessage"></p>
+            </div>
+        </div>
         <script>
+            const user = JSON.parse(localStorage.getItem("user"));
+            const nav = document.getElementById("main-nav");
+            const links = Array.from(nav.querySelectorAll("a"));
+
+            // Define restricted links by role
+            const restrictedForNone = ["register.html", "list.html", "email.html", "admin.html", "memberDetails.html"];
+            const restrictedForUser = ["register.html", "list.html", "email.html", "admin.html", "signup.html", "signin.html"];
+            const restrictedForAdmin = ["signup.html", "signin.html"];
+
+            // Hide links based on role
+            if (user === null) {
+                links.forEach(link => {
+                    if (restrictedForNone.some(r => link.href.includes(r))) {
+                        link.style.display = "none";
+                    }
+                });
+            } else if (user?.roles[0].name === 'USER') {
+                links.forEach(link => {
+                    if (restrictedForUser.some(r => link.href.includes(r))) {
+                        link.style.display = "none";
+                    }
+                });
+            } else if (user?.roles[0].name === 'ADMIN') {
+                links.forEach(link => {
+                    if (restrictedForAdmin.some(r => link.href.includes(r))) {
+                        link.style.display = "none";
+                    }
+                });
+            }
+            if (user?.roles?.[0]?.name === 'USER' || user?.roles?.[0]?.name === 'ADMIN') {
+                document.getElementById("logout-link").style.display = "inline";
+            } else {
+                document.getElementById("logout-link").style.display = "none";
+            }
+
+            // Add separator (|) between visible links
+            const visibleLinks = links.filter(link => link.style.display !== "none");
+            nav.innerHTML = ''; // clear nav
+
+            visibleLinks.forEach((link, index) => {
+                nav.appendChild(link);
+                if (index < visibleLinks.length - 1) {
+                    const separator = document.createTextNode(" | ");
+                    nav.appendChild(separator);
+                }
+            });
+
+            function logout() {
+                fetch("/api/v1/members/logout", {
+                    method: "POST",
+                    credentials: "include"
+                }).then(() => {
+                    localStorage.removeItem("user"); // Clear user info from localStorage
+                    window.location.href = "index.html"; // Redirect to home
+                }).catch(err => console.error("Logout failed:", err));
+            }
             document.getElementById("notificationForm").addEventListener("submit", function(e) {
             e.preventDefault();
             const email = {
@@ -126,26 +202,45 @@
             fetch("/api/v1/members/email/send", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify(email)
             })
             .then(res => {
                 if (res.ok) {
                 window.location.href = "index.html";
                 } else {
-                alert("Email failed. Please check your input.");
+                    return res.text().then(errorMessage => {
+                        throw new Error(errorMessage || "Unknown error occurred");
+                    });
                 }
             })
-            .catch(() => alert("Error connecting to the server."));
+            .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
             });
-            // Inject header
-            fetch("header.html")
-                .then(res => res.text())
-                .then(data => document.getElementById("header").innerHTML = data);
-        
+
             // Inject footer
             fetch("footer.html")
                 .then(res => res.text())
                 .then(data => document.getElementById("footer").innerHTML = data);
+
+            //Error Modal
+            function showErrorModal(message) {
+                const modal = document.getElementById("errorModal");
+                const messageBox = document.getElementById("errorMessage");
+                messageBox.textContent = message;
+                modal.style.display = "block";
+            }
+
+            function closeErrorModal() {
+                document.getElementById("errorModal").style.display = "none";
+            }
+
+            // Optional: Close modal on outside click
+            window.onclick = function(event) {
+                const modal = document.getElementById("errorModal");
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            };
         </script>
     </body>
 </html>

@@ -24,6 +24,7 @@ public class Member {
 
     private String statusChangeDate;
     private Boolean isStatusChanged = false;
+    private Boolean isSignedUp = false;
 
 
     public Long getId() {
@@ -144,5 +145,13 @@ public class Member {
 
     public void setStatusChanged(Boolean statusChanged) {
         isStatusChanged = statusChanged;
+    }
+
+    public Boolean getSignedUp() {
+        return isSignedUp;
+    }
+
+    public void setSignedUp(Boolean signedUp) {
+        isSignedUp = signedUp;
     }
 }

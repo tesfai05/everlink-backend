@@ -2,34 +2,130 @@ package com.tesfai.everlink.resource;
 
 import com.tesfai.everlink.dto.EmailDTO;
 import com.tesfai.everlink.dto.MemberDTO;
+import com.tesfai.everlink.dto.RoleDTO;
+import com.tesfai.everlink.dto.UserDTO;
 import com.tesfai.everlink.service.IEmailService;
 import com.tesfai.everlink.service.IEverLinkService;
 import com.tesfai.everlink.utils.EverLinkUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/members")
 @CrossOrigin(origins = "*")
 public class EverLinkResource {
     private final IEverLinkService everLinkService;
-
     private final IEmailService emailService;
+    private final AuthenticationManager authenticationManager;
 
-    public EverLinkResource(IEverLinkService everLinkService, IEmailService emailService) {
+    public EverLinkResource(IEverLinkService everLinkService, IEmailService emailService, AuthenticationManager authenticationManager) {
         this.everLinkService = everLinkService;
         this.emailService = emailService;
+        this.authenticationManager = authenticationManager;
     }
 
 
     @GetMapping
     public List<MemberDTO> getMembers(){
         return everLinkService.getMembers();
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletRequest httpRequest) {
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword());
+        try {
+            Authentication auth = authenticationManager.authenticate(authToken);
+
+            // Create new SecurityContext and save it to session
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+
+            new HttpSessionSecurityContextRepository().saveContext(context, httpRequest, null);
+
+            userDTO = everLinkService.signinMember(userDTO);
+            return ResponseEntity.ok(Map.of(
+                    "username", userDTO.getUsername(),
+                    "memberId", userDTO.getMemberId(),
+                    "roles", userDTO.getRoles()
+            ));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid username or password"));
+        }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        SecurityContextHolder.clearContext();
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody UserDTO userDTO){
+        try {
+            String memberId = userDTO.getMemberId();
+            List<String> memberIdList = everLinkService.getMembers().stream()
+                    .map(m -> m.getMemberId())
+                    .collect(Collectors.toList());
+            if(!memberIdList.contains(memberId)){
+                return ResponseEntity.badRequest().body("Invalid member ID.");
+            }
+            MemberDTO memberDTO = everLinkService.retrieveMember(userDTO.getMemberId());
+            if(memberDTO.getSignedUp()!=null && memberDTO.getSignedUp()){
+                return ResponseEntity.badRequest().body("Member with ID "+userDTO.getMemberId()+" already have account.");
+            }
+
+            return ResponseEntity.ok(everLinkService.signupMember(userDTO));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/admin")
+    public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO){
+        try {
+            String memberId = userDTO.getMemberId();
+            //Check memberId is valid
+            List<String> memberIdList = everLinkService.getMembers().stream()
+                    .map(m -> m.getMemberId())
+                    .collect(Collectors.toList());
+            if(!memberIdList.contains(memberId)){
+                return ResponseEntity.badRequest().body("Invalid member ID.");
+            }
+            //check if member has account
+            MemberDTO memberDTO = everLinkService.retrieveMember(userDTO.getMemberId());
+            if(!memberDTO.getSignedUp()){
+                return ResponseEntity.badRequest().body("Member with ID "+userDTO.getMemberId()+" has no account.");
+            }
+
+            return ResponseEntity.ok(everLinkService.updateUser(userDTO));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @PostMapping("/register")

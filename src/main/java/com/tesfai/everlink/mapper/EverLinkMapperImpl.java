@@ -4,17 +4,26 @@ import com.tesfai.everlink.constant.EverLinkConstants;
 import com.tesfai.everlink.constant.MartialStatusEnum;
 import com.tesfai.everlink.constant.MembershipEnum;
 import com.tesfai.everlink.dto.MemberDTO;
+import com.tesfai.everlink.dto.RoleDTO;
+import com.tesfai.everlink.dto.UserDTO;
 import com.tesfai.everlink.entity.Member;
+import com.tesfai.everlink.entity.User;
 import com.tesfai.everlink.utils.EverLinkUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class EverLinkMapperImpl implements IEverLinkMapper{
+
+    private final PasswordEncoder passwordEncoder;
+
+    public EverLinkMapperImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public List<MemberDTO> mapToDto(List<Member> members) {
@@ -65,6 +74,37 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         return member;
     }
 
+    @Override
+    public User mapToUser(UserDTO userDTO) {
+        User user = new User();
+        user.setMemberId(userDTO.getMemberId());
+        user.setUsername(userDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(userDTO.getUsername()));
+        user.setEnabled(true);
+        return user;
+    }
+
+    @Override
+    public UserDTO mapToUserDTO(User savedUser, String memberId) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(savedUser.getUsername());
+        Set<RoleDTO> roles = new HashSet<>();
+        savedUser.getRoles().forEach(r->{
+            RoleDTO role = new RoleDTO();
+            role.setName(r.getName());
+            roles.add(role);
+        });
+        userDTO.setRoles(roles);
+        userDTO.setUsername(savedUser.getUsername());
+        userDTO.setMemberId(memberId);
+        return userDTO;
+    }
+
+    @Override
+    public boolean passwordMatches(UserDTO userDTO, User user) {
+        return passwordEncoder.matches(userDTO.getPassword(),user.getPassword());
+    }
+
     private Member mapToMember(MemberDTO memberDTO){
         Member member = new Member();
         member.setMemberId(memberDTO.getMemberId());
@@ -90,6 +130,9 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         memberDTO.setPercentageOfOwnership(member.getPercentageOfOwnership());
         memberDTO.setStatusChangeDate(member.getStatusChangeDate());
         memberDTO.setStatusChanged(member.getStatusChanged());
+        memberDTO.setSignedUp(member.getSignedUp());
+        memberDTO.setCurrentMonthlyContribution(member.getCurrentMonthlyContribution());
+        memberDTO.setPreviousMonthlyContribution(member.getPreviousMonthlyContribution());
         return memberDTO;
     }
 }

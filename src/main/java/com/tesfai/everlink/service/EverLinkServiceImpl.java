@@ -1,7 +1,12 @@
 package com.tesfai.everlink.service;
 
+import com.tesfai.everlink.dto.UserDTO;
+import com.tesfai.everlink.entity.Role;
+import com.tesfai.everlink.entity.User;
 import com.tesfai.everlink.mapper.IEverLinkMapper;
 import com.tesfai.everlink.repository.IEverLinkRepository;
+import com.tesfai.everlink.repository.IRoleRepository;
+import com.tesfai.everlink.repository.IUserRepository;
 import com.tesfai.everlink.utils.EverLinkUtils;
 import com.tesfai.everlink.constant.EverLinkConstants;
 import com.tesfai.everlink.constant.MartialStatusEnum;
@@ -15,9 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,10 +28,16 @@ public class EverLinkServiceImpl implements IEverLinkService{
 
     private final IEverLinkRepository everLinkRepository;
     private final IEverLinkMapper everLinkMapper;
+    private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
+    private final IEmailService emailService;
 
-    public EverLinkServiceImpl(IEverLinkRepository everLinkRepository, IEverLinkMapper everLinkMapper) {
+    public EverLinkServiceImpl(IEverLinkRepository everLinkRepository, IEverLinkMapper everLinkMapper, IUserRepository userRepository, IRoleRepository roleRepository, IEmailService emailService) {
         this.everLinkRepository = everLinkRepository;
         this.everLinkMapper = everLinkMapper;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.emailService = emailService;
     }
 
 
@@ -51,7 +60,16 @@ public class EverLinkServiceImpl implements IEverLinkService{
         Member savedMember = everLinkRepository.save(member);
         calculateTotalContribution();
         calculatePercentageOfOwnership();
-        return everLinkMapper.mapToDto(List.of(savedMember)).get(0);
+        MemberDTO savedMemberSTO = everLinkMapper.mapToDto(List.of(savedMember)).get(0);
+        //sent email
+        String subject = "Thank you for registered with Ever Link Holding LLC. ";
+        String body = "Hi "+memberDTO.getFullName()+", \n\n"+
+                "Thank you for registered with Ever Link Holding LLC. "+"\n"+
+                "Your member ID is "+memberId+", please keep in a save place. You need this ID to create account with us."+"\n\n"+
+                "With Regards,"+" \n"+
+                "EverLink Holding LLC";
+        emailService.sendEmail(memberDTO.getEmail(), subject, body);
+        return savedMemberSTO;
     }
 
     private String generateMemberId(MemberDTO memberDTO) {
@@ -129,6 +147,51 @@ public class EverLinkServiceImpl implements IEverLinkService{
             return memberDTOList.get(0);
         }
         return null;
+    }
+
+    @Override
+    public UserDTO signupMember(UserDTO userDTO) {
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new RuntimeException("Default role USER not found"));
+        User user = everLinkMapper.mapToUser(userDTO);
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        //add role to user & save
+        user.setRoles(roles);
+        User savedUser = userRepository.save(user);
+        //update member with signedUp flag
+        Member member = everLinkRepository.findByMemberId(userDTO.getMemberId()).get();
+        member.setSignedUp(true);
+        everLinkRepository.save(member);
+        return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
+    }
+
+    @Override
+    public UserDTO updateUser(UserDTO userDTO) {
+        Role userRole = roleRepository.findByName("ADMIN")
+                .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
+        User user = userRepository.findByUsername(userDTO.getUsername()).get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        //update role to user & save
+        user.setRoles(roles);
+        User savedUser = userRepository.save(user);
+        return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
+    }
+
+    @Override
+    public UserDTO signinMember(UserDTO userDTO) {
+        Optional<User> user = userRepository.findByUsername(userDTO.getUsername());
+        if(!user.isPresent()){
+            throw new RuntimeException("Invalid username or password.");
+        }
+        boolean matches = everLinkMapper.passwordMatches(userDTO, user.get());
+        if(!matches){
+            throw new RuntimeException("Invalid username or password.");
+        }
+        String memberId = user.get().getMemberId();
+        //Member member = everLinkRepository.findByMemberId(memberId).get();
+        return everLinkMapper.mapToUserDTO(user.get(), memberId);
     }
 
     private void calculateTotalContribution(){

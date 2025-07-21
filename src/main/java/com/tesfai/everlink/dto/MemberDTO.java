@@ -14,6 +14,9 @@ public class MemberDTO {
     private Double percentageOfOwnership;
     private String statusChangeDate;
     private Boolean isStatusChanged;
+    private Boolean isSignedUp;
+    private Double currentMonthlyContribution;
+    private Double previousMonthlyContribution;
 
     public String getMemberId() {
         return memberId;
@@ -109,5 +112,29 @@ public class MemberDTO {
 
     public void setStatusChanged(Boolean statusChanged) {
         isStatusChanged = statusChanged;
+    }
+
+    public Boolean getSignedUp() {
+        return isSignedUp;
+    }
+
+    public void setSignedUp(Boolean signedUp) {
+        isSignedUp = signedUp;
+    }
+
+    public Double getCurrentMonthlyContribution() {
+        return currentMonthlyContribution;
+    }
+
+    public void setCurrentMonthlyContribution(Double currentMonthlyContribution) {
+        this.currentMonthlyContribution = currentMonthlyContribution;
+    }
+
+    public Double getPreviousMonthlyContribution() {
+        return previousMonthlyContribution;
+    }
+
+    public void setPreviousMonthlyContribution(Double previousMonthlyContribution) {
+        this.previousMonthlyContribution = previousMonthlyContribution;
     }
 }
