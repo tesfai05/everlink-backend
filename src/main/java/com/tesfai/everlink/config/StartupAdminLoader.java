@@ -14,9 +14,9 @@ import java.util.Set;
 
 @Configuration
 public class StartupAdminLoader {
-    @Value(value = "${ADMIN_USERNAME}")
+    @Value(value = "${admin.username}")
     private String adminUsername;
-    @Value(value = "${ADMIN_PASSWORD}")
+    @Value(value = "${admin.password}")
     private String adminPassword;
 
     @Bean
