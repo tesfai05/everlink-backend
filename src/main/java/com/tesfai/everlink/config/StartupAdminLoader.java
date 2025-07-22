@@ -27,19 +27,19 @@ public class StartupAdminLoader {
         return args -> {
             // Insert ADMIN if it doesn't exist
             jdbcTemplate.update("""
-                INSERT INTO everlinkllc.roles (name)
+                INSERT INTO wcnua0h21v69edfi.roles (name)
                 SELECT 'ADMIN'
                 WHERE NOT EXISTS (
-                    SELECT 1 FROM everlinkllc.roles WHERE name = 'ADMIN'
+                    SELECT 1 FROM wcnua0h21v69edfi.roles WHERE name = 'ADMIN'
                 )
             """);
 
             // Insert USER if it doesn't exist
             jdbcTemplate.update("""
-                INSERT INTO everlinkllc.roles (name)
+                INSERT INTO wcnua0h21v69edfi.roles (name)
                 SELECT 'USER'
                 WHERE NOT EXISTS (
-                    SELECT 1 FROM everlinkllc.roles WHERE name = 'USER'
+                    SELECT 1 FROM wcnua0h21v69edfi.roles WHERE name = 'USER'
                 )
             """);
 
