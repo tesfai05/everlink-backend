@@ -79,7 +79,7 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         User user = new User();
         user.setMemberId(userDTO.getMemberId());
         user.setUsername(userDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(userDTO.getUsername()));
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setEnabled(true);
         return user;
     }
