@@ -48,4 +48,8 @@ public class EverLinkUtils {
         }
         return joinDate.isAfter(leaveDate);
     }
+
+    public  static boolean isAlphanumeric(String str) {
+        return str != null && str.matches("[a-zA-Z0-9]+");
+    }
 }

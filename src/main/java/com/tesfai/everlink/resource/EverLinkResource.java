@@ -2,7 +2,6 @@ package com.tesfai.everlink.resource;
 
 import com.tesfai.everlink.dto.EmailDTO;
 import com.tesfai.everlink.dto.MemberDTO;
-import com.tesfai.everlink.dto.RoleDTO;
 import com.tesfai.everlink.dto.UserDTO;
 import com.tesfai.everlink.service.IEmailService;
 import com.tesfai.everlink.service.IEverLinkService;
@@ -86,6 +85,14 @@ public class EverLinkResource {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody UserDTO userDTO){
         try {
+            String username = userDTO.getUsername();
+            if(username.length()<5 || !EverLinkUtils.isAlphanumeric(username) ){
+                return ResponseEntity.badRequest().body("Invalid username.");
+            }
+            String password = userDTO.getPassword();
+            if(password.length()<5 || !EverLinkUtils.isAlphanumeric(password)){
+                return ResponseEntity.badRequest().body("Invalid password.");
+            }
             String memberId = userDTO.getMemberId();
             List<String> memberIdList = everLinkService.getMembers().stream()
                     .map(m -> m.getMemberId())
