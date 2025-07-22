@@ -168,15 +168,26 @@ public class EverLinkServiceImpl implements IEverLinkService{
 
     @Override
     public UserDTO updateUser(UserDTO userDTO) {
-        Role userRole = roleRepository.findByName("ADMIN")
-                .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
-        User user = userRepository.findByUsername(userDTO.getUsername()).get();
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-        //update role to user & save
-        user.setRoles(roles);
-        User savedUser = userRepository.save(user);
-        return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
+        Optional<User> userOptional = userRepository.findByUsername(userDTO.getUsername());
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            Role userRole;
+            boolean isAdmin = user.getRoles().stream().anyMatch(r -> "ADMIN".equalsIgnoreCase(r.getName()));
+            if(isAdmin){
+                userRole = roleRepository.findByName("USER")
+                        .orElseThrow(() -> new RuntimeException("USER role not found"));
+            }else{
+                userRole = roleRepository.findByName("ADMIN")
+                        .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
+            }
+            Set<Role> roles = new HashSet<>();
+            roles.add(userRole);
+            //update role to user & save
+            user.setRoles(roles);
+            User savedUser = userRepository.save(user);
+            return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
+        }
+        return new UserDTO();
     }
 
     @Override
