@@ -136,6 +136,9 @@ public class EverLinkResource {
                 return ResponseEntity.badRequest().body("User with member ID "+memberId+" is not signed up.");
             }
             User user = retrievedUser.get();
+            if(!userDTO.getUsername().equalsIgnoreCase(user.getUsername())){
+                return ResponseEntity.badRequest().body("Username is not same as the one on file.");
+            }
             userDTO = everLinkService.changePassword(userDTO, user);
             return ResponseEntity.ok(userDTO);
         }catch (Exception e){
