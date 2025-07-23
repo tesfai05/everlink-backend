@@ -75,8 +75,7 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
     }
 
     @Override
-    public User mapToUser(UserDTO userDTO) {
-        User user = new User();
+    public User mapToUser(UserDTO userDTO, User user) {
         user.setMemberId(userDTO.getMemberId());
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));

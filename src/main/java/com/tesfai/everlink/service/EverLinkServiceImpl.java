@@ -153,7 +153,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
     public UserDTO signupMember(UserDTO userDTO) {
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Default role USER not found"));
-        User user = everLinkMapper.mapToUser(userDTO);
+        User user = everLinkMapper.mapToUser(userDTO, new User());
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         //add role to user & save
@@ -163,6 +163,13 @@ public class EverLinkServiceImpl implements IEverLinkService{
         Member member = everLinkRepository.findByMemberId(userDTO.getMemberId()).get();
         member.setSignedUp(true);
         everLinkRepository.save(member);
+        return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
+    }
+
+    @Override
+    public UserDTO changePassword(UserDTO userDTO, User user) {
+        user = everLinkMapper.mapToUser(userDTO, user);
+        User savedUser = userRepository.save(user);
         return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
     }
 
@@ -203,6 +210,11 @@ public class EverLinkServiceImpl implements IEverLinkService{
         String memberId = user.get().getMemberId();
         //Member member = everLinkRepository.findByMemberId(memberId).get();
         return everLinkMapper.mapToUserDTO(user.get(), memberId);
+    }
+
+    @Override
+    public Optional<User> retrieveUser(String memberId) {
+        return userRepository.findByMemberId(memberId);
     }
 
     private void calculateTotalContribution(){

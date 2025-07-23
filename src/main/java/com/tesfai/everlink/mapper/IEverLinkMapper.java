@@ -14,7 +14,7 @@ public interface IEverLinkMapper {
 
     Member updateMember(Member member, MemberDTO memberDTO);
 
-    User mapToUser(UserDTO userDTO);
+    User mapToUser(UserDTO userDTO, User user);
 
     UserDTO mapToUserDTO(User savedUser, String memberId);
 

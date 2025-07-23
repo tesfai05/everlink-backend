@@ -37,9 +37,13 @@ public class SecurityConfig {
                                 "/signup.html",
                                 "/footer.html",
                                 "/header.html",
-                                "/logo.jpeg",
+                                "/image/**",
                                 "/api/v1/members/signin",
-                                "/api/v1/members/signup"
+                                "/api/v1/members/signup",
+                                "/api/v1/members/change-password",
+                                "/docs/everlink_member_policy_tig.pdf",
+                                "/docs/everlink_member_policy_en.pdf",
+                                "/changePassword.html"
                         ).permitAll()
                         .requestMatchers("/register.html", "/list.html", "/email.html", "/admin.html").hasRole("ADMIN")
                         .requestMatchers("/api/v1/members/**", "/memberDetails.html").hasAnyRole("USER", "ADMIN")

@@ -3,6 +3,7 @@ package com.tesfai.everlink.resource;
 import com.tesfai.everlink.dto.EmailDTO;
 import com.tesfai.everlink.dto.MemberDTO;
 import com.tesfai.everlink.dto.UserDTO;
+import com.tesfai.everlink.entity.User;
 import com.tesfai.everlink.service.IEmailService;
 import com.tesfai.everlink.service.IEverLinkService;
 import com.tesfai.everlink.utils.EverLinkUtils;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -106,6 +108,36 @@ public class EverLinkResource {
             }
 
             return ResponseEntity.ok(everLinkService.signupMember(userDTO));
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO){
+        try {
+            String username = userDTO.getUsername();
+            if(username.length()<5 || !EverLinkUtils.isAlphanumeric(username) ){
+                return ResponseEntity.badRequest().body("Invalid username.");
+            }
+            String password = userDTO.getPassword();
+            if(password.length()<5 || !EverLinkUtils.isAlphanumeric(password)){
+                return ResponseEntity.badRequest().body("Invalid password.");
+            }
+            String memberId = userDTO.getMemberId();
+            List<String> memberIdList = everLinkService.getMembers().stream()
+                    .map(m -> m.getMemberId())
+                    .collect(Collectors.toList());
+            if(!memberIdList.contains(memberId)){
+                return ResponseEntity.badRequest().body("Invalid member ID.");
+            }
+            Optional<User> retrievedUser = everLinkService.retrieveUser(userDTO.getMemberId());
+            if(!retrievedUser.isPresent()){
+                return ResponseEntity.badRequest().body("User with member ID "+memberId+" is not signed up.");
+            }
+            User user = retrievedUser.get();
+            userDTO = everLinkService.changePassword(userDTO, user);
+            return ResponseEntity.ok(userDTO);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
