@@ -168,6 +168,34 @@
             .close-btn:hover {
                 color: #000;
             }
+
+            /* Modal background */
+            #confirmModal {
+                position: fixed;
+                z-index: 9999;
+                left: 0; top: 0;
+                width: 100%; height: 100%;
+                background-color: rgba(0,0,0,0.6);
+                display: none;
+            }
+            .modal-content {
+                background: #fff;
+                padding: 20px;
+                width: 300px;
+                margin: 15% auto;
+                border-radius: 8px;
+                text-align: center;
+                box-shadow: 0 0 10px rgba(0,0,0,0.25);
+            }
+            .modal-buttons button {
+                margin: 10px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            .confirm-btn { background: #28a745; color: white; }
+            .cancel-btn { background: #dc3545; color: white; }
         </style>
     </head>
     <body>
@@ -182,6 +210,7 @@
                     <a href="list.html">Members</a>
                     <a href="email.html">Send Notification</a>
                     <a href="admin.html">Update User Role</a>
+                    <a href="#" id="refresh-record" style="display: none;" onclick="refreshRecord()">Refresh Record</a>
                     <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
                 </nav>
                 <hr>
@@ -222,6 +251,18 @@
                 <p id="errorMessage"></p>
             </div>
         </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmModal" style="display: none;">
+            <div class="modal-content">
+                <p id="confirmMessage">Are you sure?</p>
+                <div class="modal-buttons">
+                    <button class="confirm-btn" id="confirmYes">Yes</button>
+                    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <script>
             const user = JSON.parse(localStorage.getItem("user"));
             const nav = document.getElementById("main-nav");
@@ -257,7 +298,11 @@
             } else {
                 document.getElementById("logout-link").style.display = "none";
             }
-
+            if (user?.roles?.[0]?.name === 'ADMIN') {
+                document.getElementById("refresh-record").style.display = "inline";
+            } else {
+                document.getElementById("refresh-record").style.display = "none";
+            }
             // Add separator (|) between visible links
             const visibleLinks = links.filter(link => link.style.display !== "none");
             nav.innerHTML = ''; // clear nav
@@ -327,14 +372,14 @@
             }
 
             function deleteMember(memberId) {
-                if (confirm("Are you sure you want to delete this member?")) {
+                showConfirmation("Are you sure you want to delete this member?", () => {
                     fetch(`/api/v1/members/delete/${memberId}`, {
                         method: 'DELETE',
                         credentials: "include"
                     })
-                    .then(res => {
+                        .then(res => {
                         if (res.ok) {
-                            showErrorModal("Member deleted.")
+                            showErrorModal("Member deleted.");
                             location.reload();
                         } else {
                             return res.text().then(errorMessage => {
@@ -342,10 +387,17 @@
                             });
                         }
                     })
-                   .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
-                }
+                        .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
+                });
             }
-
+            function refreshRecord(){
+                fetch("/api/v1/members/refresh-record", {
+                    method: "GET",
+                    credentials: "include"
+                }).then(() => {
+                    window.location.href = "index.html"; // Redirect to home
+                }).catch(err => console.error("Refresh record failed:", err));
+            }
             // Inject footer
             fetch("footer.html")
                 .then(res => res.text())
@@ -369,6 +421,27 @@
                     modal.style.display = "none";
                 }
             };
+
+            function showConfirmation(message, onConfirm) {
+                document.getElementById("confirmMessage").textContent = message;
+                const confirmModal = document.getElementById("confirmModal");
+                confirmModal.style.display = "block";
+
+                const confirmYesBtn = document.getElementById("confirmYes");
+
+                // Remove previous event listeners
+                const newBtn = confirmYesBtn.cloneNode(true);
+                confirmYesBtn.parentNode.replaceChild(newBtn, confirmYesBtn);
+
+                newBtn.onclick = () => {
+                    closeModal();
+                    onConfirm();
+                };
+            }
+
+            function closeModal() {
+                document.getElementById("confirmModal").style.display = "none";
+            }
         </script>
     </body>
 </html>

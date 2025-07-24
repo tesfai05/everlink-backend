@@ -169,6 +169,12 @@ public class EverLinkResource {
         }
     }
 
+    @GetMapping("/refresh-record")
+    public ResponseEntity<?> refreshRecord(){
+        everLinkService.refreshRecord();
+        return ResponseEntity.ok("Record refreshed.");
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerMember(@RequestBody MemberDTO memberDTO){
         try {
@@ -180,6 +186,12 @@ public class EverLinkResource {
             if (!isValid) {
                 return ResponseEntity.badRequest().body("Join date must not be in the future.");
             }
+            String fullName = memberDTO.getFullName().replaceAll("\\s+", " ");
+            String[] name = fullName.split("\s");
+            if(name!=null && name.length<2){
+                return ResponseEntity.badRequest().body("First name and Last name are required.");
+            }
+            memberDTO.setFullName(fullName);
             return ResponseEntity.ok(everLinkService.registerMember(memberDTO));
         }catch (DateTimeParseException e){
             return ResponseEntity.badRequest().body("Invalid join date format. Please use MM/dd/yyyy.");

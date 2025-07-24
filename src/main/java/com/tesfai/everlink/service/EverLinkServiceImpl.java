@@ -217,6 +217,18 @@ public class EverLinkServiceImpl implements IEverLinkService{
         return userRepository.findByMemberId(memberId);
     }
 
+    @Override
+    public void refreshRecord() {
+        List<Member> members = everLinkRepository.findAll();
+        if(!members.isEmpty()) {
+            members.stream().map(member -> {
+                calculateTotalContribution();
+                calculatePercentageOfOwnership();
+                return member;
+            });
+        }
+    }
+
     private void calculateTotalContribution(){
         everLinkRepository.findAll().stream()
                 .peek(m->{
