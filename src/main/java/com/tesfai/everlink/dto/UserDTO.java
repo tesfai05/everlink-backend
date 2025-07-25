@@ -1,7 +1,5 @@
 package com.tesfai.everlink.dto;
 
-import com.tesfai.everlink.entity.Role;
-
 import java.util.Set;
 
 public class UserDTO {
@@ -9,6 +7,7 @@ public class UserDTO {
     private String password;
     private String memberId;
     private Set<RoleDTO> roles;
+    private String email;
 
     public String getUsername() {
         return username;
@@ -40,5 +39,12 @@ public class UserDTO {
 
     public void setRoles(Set<RoleDTO> roles) {
         this.roles = roles;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
     }
 }

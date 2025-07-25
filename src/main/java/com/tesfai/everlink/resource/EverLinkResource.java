@@ -116,28 +116,28 @@ public class EverLinkResource {
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO){
         try {
-            String username = userDTO.getUsername();
-            if(username.length()<5 || !EverLinkUtils.isAlphanumeric(username) ){
-                return ResponseEntity.badRequest().body("Invalid username.");
-            }
-            String password = userDTO.getPassword();
-            if(password.length()<5 || !EverLinkUtils.isAlphanumeric(password)){
-                return ResponseEntity.badRequest().body("Invalid password.");
-            }
             String memberId = userDTO.getMemberId();
-            List<String> memberIdList = everLinkService.getMembers().stream()
-                    .map(m -> m.getMemberId())
-                    .collect(Collectors.toList());
-            if(!memberIdList.contains(memberId)){
-                return ResponseEntity.badRequest().body("Invalid member ID.");
-            }
             Optional<User> retrievedUser = everLinkService.retrieveUser(userDTO.getMemberId());
             if(!retrievedUser.isPresent()){
                 return ResponseEntity.badRequest().body("User with member ID "+memberId+" is not signed up.");
             }
+            String username = userDTO.getUsername();
+            if(username.length()<5 || !EverLinkUtils.isAlphanumeric(username) ){
+                return ResponseEntity.badRequest().body("Invalid username or password.");
+            }
+            String password = userDTO.getPassword();
+            if(password.length()<5 || !EverLinkUtils.isAlphanumeric(password)){
+                return ResponseEntity.badRequest().body("Invalid password or password.");
+            }
+            List<String> memberIdList = everLinkService.getMembers().stream()
+                    .map(m -> m.getMemberId())
+                    .collect(Collectors.toList());
+            MemberDTO retrievedMember = everLinkService.retrieveMember(userDTO.getMemberId());
             User user = retrievedUser.get();
-            if(!userDTO.getUsername().equalsIgnoreCase(user.getUsername())){
-                return ResponseEntity.badRequest().body("Username is not same as the one on file.");
+            if(!userDTO.getUsername().equalsIgnoreCase(user.getUsername())
+                    || !memberIdList.contains(memberId)
+                    || !retrievedMember.getEmail().equalsIgnoreCase(userDTO.getEmail())){
+                return ResponseEntity.badRequest().body("User is not verified to change password.");
             }
             userDTO = everLinkService.changePassword(userDTO, user);
             return ResponseEntity.ok(userDTO);
