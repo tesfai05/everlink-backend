@@ -31,12 +31,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(
                                  "/",
+                                 "/js/**",
+                                 "/css/**",
+                                 "/image/**",
                                 "/index.html",
                                 "/signin.html",
                                 "/signup.html",
                                 "/footer.html",
-                                "/header.html",
-                                "/image/**",
                                 "/api/v1/members/signin",
                                 "/api/v1/members/signup",
                                 "/api/v1/members/change-password",

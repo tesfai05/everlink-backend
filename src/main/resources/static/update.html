@@ -212,7 +212,7 @@
                 memberId = member.memberId;
 
                 document.getElementById("fullName").value = member.fullName || "";
-                document.getElementById("maritalStatus").value = member.martialStatus || "";
+                document.getElementById("maritalStatus").value = member.maritalStatus || "";
                 document.getElementById("email").value = member.email || "";
 
                 document.getElementById("joinDate").value = toInputDateFormat(member.joinDate);
@@ -221,48 +221,48 @@
             }
 
             document.getElementById("memberForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const rawJoinDate = document.getElementById("joinDate").value;
-            const rawLeaveDate = document.getElementById("leaveDate").value;
-            const rawScDate = document.getElementById("statusChangeDate").value;
+                e.preventDefault();
+                const rawJoinDate = document.getElementById("joinDate").value;
+                const rawLeaveDate = document.getElementById("leaveDate").value;
+                const rawScDate = document.getElementById("statusChangeDate").value;
 
-            const formatDate = (dateStr) => {
-                if (!dateStr) return null;
-                const [year, month, day] = dateStr.split("-");
-                return `${month}/${day}/${year}`;
-            };
+                const formatDate = (dateStr) => {
+                    if (!dateStr) return null;
+                    const [year, month, day] = dateStr.split("-");
+                    return `${month}/${day}/${year}`;
+                };
 
-            const updatedMember = {
-                memberId: memberId,
-                fullName: document.getElementById("fullName").value,
-                martialStatus: document.getElementById("maritalStatus").value,
-                email: document.getElementById("email").value,
-                joinDate: formatDate(rawJoinDate),
-                leaveDate: formatDate(rawLeaveDate),
-                statusChangeDate: formatDate(rawScDate)
-            };
+                const updatedMember = {
+                    memberId: memberId,
+                    fullName: document.getElementById("fullName").value,
+                    maritalStatus: document.getElementById("maritalStatus").value,
+                    email: document.getElementById("email").value,
+                    joinDate: formatDate(rawJoinDate),
+                    leaveDate: formatDate(rawLeaveDate),
+                    statusChangeDate: formatDate(rawScDate)
+                };
 
-            fetch(`/api/v1/members/update/${memberId}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(updatedMember)
-            })
-            .then(res => {
-                const messageBox = document.getElementById("messageBox");
-                if (res.ok) {
-                    window.location.href = "list.html";
-                    localStorage.removeItem("editMember");
-                } else {
-                    messageBox.textContent = "Update failed. Please try again.";
-                    messageBox.className = "message error";
-                }
+                fetch(`/api/v1/members/update/${memberId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(updatedMember)
                 })
-            .catch(() => {
-                const messageBox = document.getElementById("messageBox");
-                messageBox.textContent = "Error occurred during update.";
-                messageBox.className = "message error";
-                });
+                .then(res => {
+                    const messageBox = document.getElementById("messageBox");
+                    if (res.ok) {
+                        window.location.href = "list.html";
+                        localStorage.removeItem("editMember");
+                    } else {
+                        messageBox.textContent = "Update failed. Please try again.";
+                        messageBox.className = "message error";
+                    }
+                    })
+                .catch(() => {
+                    const messageBox = document.getElementById("messageBox");
+                    messageBox.textContent = "Error occurred during update.";
+                    messageBox.className = "message error";
+                    });
             });
             function refreshRecord(){
                 fetch("/api/v1/members/refresh-record", {
