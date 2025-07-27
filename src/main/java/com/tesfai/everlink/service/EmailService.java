@@ -1,6 +1,7 @@
 package com.tesfai.everlink.service;
 
 import com.tesfai.everlink.constant.MembershipEnum;
+import com.tesfai.everlink.entity.Member;
 import com.tesfai.everlink.repository.IEverLinkRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,5 +46,15 @@ public class EmailService implements IEmailService{
         }
     }
 
+    @Override
+    public void sendEmailOnUpdateInfo(String subject, String body, String memberId) {
+        Optional<Member> member = everLinkRepository.findByMemberId(memberId);
+        if(member.isPresent()){
+            String email = member.get().getEmail();
+            if(!email.isBlank()){
+                sendEmail(email, subject, body);
+            }
+        }
+    }
 }
 
