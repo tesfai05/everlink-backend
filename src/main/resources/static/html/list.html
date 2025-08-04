@@ -196,6 +196,34 @@
             }
             .confirm-btn { background: #28a745; color: white; }
             .cancel-btn { background: #dc3545; color: white; }
+
+            .arrow {
+                display: inline-block;
+                transition: transform 0.2s ease;
+                margin-right: 5px;
+            }
+
+            .dropdown {
+                display: none;
+                text-align: left;
+                margin-left: 20px; /* ⬅️ indentation */
+                margin-top: 5px;
+                padding-left: 15px;
+                border-left: 2px solid #ccc;
+            }
+            .dropdown a {
+                display: block;
+                color: #007bff;
+                text-decoration: none;
+                margin: 3px 0;
+            }
+            .dropdown a:hover {
+                text-decoration: underline;
+            }
+            .dropdown a::before {
+                content: "↳ ";
+                color: #888;
+            }
         </style>
     </head>
     <body>
@@ -232,7 +260,6 @@
                             <th>Percentage of Ownership</th>
                             <th>Status Change Date</th>
                             <th>Is Status Changed?</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -316,7 +343,7 @@
             });
 
             function logout() {
-                fetch("/api/v1/members/logout", {
+                fetch("/api/v1/members/public/logout", {
                     method: "POST",
                     credentials: "include"
                 }).then(() => {
@@ -326,13 +353,21 @@
             }
 
 
-            fetch("/api/v1/members")
+            fetch("/api/v1/members/admin")
             .then(res => res.json())
             .then(data => {
                 const tbody = document.querySelector("#memberTable tbody");
                 data.forEach(member => {
                 const row = `<tr>
-                    <td>${member.memberId}</td>
+                    <td>
+                        <a href="#" class="member-link" data-id="${member.memberId}">${member.memberId}<span class="arrow">&#9660;</span> </a>
+                        <div class="dropdown" id="dropdown-${member.memberId}" style="display: none; margin-top: 5px;">
+                          ${member.maritalStatus === 'Married' ? `<a href="#" onclick="displaySpouse('${member.memberId}')">Spouse</a><br/>` : ''}
+                          <a href="#" onclick="displayBeneficiaries('${member.memberId}')">Beneficiaries</a></br>
+                          <a href="#" onclick="editMember('${member.memberId}')">✏️ Edit</a></br>
+                          <a href="#" onclick="deleteMember('${member.memberId}')">🗑️ Delete</a>
+                        </div>
+                    </td>
                     <td>${member.fullName}</td>
                     <td>${member.maritalStatus}</td>
                     <td>${member.email || "-"}</td>
@@ -344,17 +379,44 @@
                     <td>${member.percentageOfOwnership}</td>
                     <td>${member.statusChangeDate || "-"}</td>
                     <td>${member.statusChanged ? "Yes" : "No"}</td>
-                    <td>
-                    <button class="edit" onclick="editMember('${member.memberId}')">Edit</button><br/>
-                    <button class="delete" onclick="deleteMember('${member.memberId}')">Delete</button>
-                    </td>
+
                 </tr>`;
                 tbody.innerHTML += row;
                 });
+
+                document.querySelector("#memberTable tbody").addEventListener("click", function (e) {
+                    if (e.target.classList.contains("member-link") || e.target.closest(".member-link")) {
+                        e.preventDefault();
+
+                        const link = e.target.closest(".member-link");
+                        const memberId = link.dataset.id;
+                        const dropdown = document.getElementById("dropdown-" + memberId);
+                        const arrow = link.querySelector(".arrow");
+
+                        // Hide all dropdowns and reset arrows
+                        document.querySelectorAll(".dropdown").forEach(el => {
+                            if (el !== dropdown) el.style.display = "none";
+                        });
+                        document.querySelectorAll(".arrow").forEach(a => a.classList.remove("expanded"));
+
+                        // Toggle this one
+                        const isVisible = dropdown.style.display === "block";
+                        dropdown.style.display = isVisible ? "none" : "block";
+
+                        document.addEventListener("click", function (e) {
+                            if (!e.target.classList.contains("member-link")) {
+                                document.querySelectorAll(".dropdown").forEach(el => el.style.display = "none");
+                            }
+                        });
+                    }
+                });
+
+
+
             });
 
             function editMember(memberId) {
-                fetch(`/api/v1/members/retrieve/${memberId}`,{
+                fetch(`/api/v1/members/user/retrieve/${memberId}`,{
                     method:"GET",
                     credentials: "include"
                 })
@@ -373,7 +435,7 @@
 
             function deleteMember(memberId) {
                 showConfirmation("Are you sure you want to delete this member?", () => {
-                    fetch(`/api/v1/members/delete/${memberId}`, {
+                    fetch(`/api/v1/members/admin/delete/${memberId}`, {
                         method: 'DELETE',
                         credentials: "include"
                     })
@@ -391,7 +453,7 @@
                 });
             }
             function refreshRecord(){
-                fetch("/api/v1/members/refresh-record", {
+                fetch("/api/v1/members/admin/refresh-record", {
                     method: "GET",
                     credentials: "include"
                 }).then(() => {

@@ -53,7 +53,7 @@ visibleLinks.forEach((link, index) => {
 });
 
 function logout() {
-    fetch("/api/v1/members/logout", {
+    fetch("/api/v1/members/public/logout", {
         method: "POST",
         credentials: "include"
     }).then(() => {
@@ -63,7 +63,7 @@ function logout() {
 }
 
 function refreshRecord(){
-    fetch("/api/v1/members/refresh-record", {
+    fetch("/api/v1/members/admin/refresh-record", {
         method: "GET",
         credentials: "include"
     }).then(() => {
@@ -108,7 +108,7 @@ function setupMakeAdminForm() {
             username: document.getElementById("username").value
         };
 
-        fetch("/api/v1/members/admin", {
+        fetch("/api/v1/members/admin/update-user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -139,7 +139,7 @@ function setupChangePasswordForm() {
             email: document.getElementById("email").value
         };
 
-        fetch("/api/v1/members/change-password", {
+        fetch("/api/v1/members/public/change-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -166,7 +166,7 @@ function setupNotificationForm() {
             body: document.getElementById("body").value
         };
 
-        fetch("/api/v1/members/email/send", {
+        fetch("/api/v1/members/admin/email/send", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -204,7 +204,7 @@ function setupRegistrationForm(){
             email: document.getElementById("email").value
         };
 
-        fetch("/api/v1/members/register", {
+        fetch("/api/v1/members/admin/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -231,7 +231,7 @@ function setupSigninForm() {
             password: document.getElementById("password").value
         };
 
-        fetch("/api/v1/members/signin", {
+        fetch("/api/v1/members/public/signin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -250,7 +250,7 @@ function setupSigninForm() {
             localStorage.setItem("user", JSON.stringify(data));
 
             // Fetch full member details using memberId or username
-            return fetch(`/api/v1/members/retrieve/${data.memberId}`, {
+            return fetch(`/api/v1/members/user/retrieve/${data.memberId}`, {
                 method: "GET",
                 credentials: "include"
             });
@@ -283,7 +283,7 @@ function setupSignupForm(){
             password: document.getElementById("password").value
         };
 
-        fetch("/api/v1/members/signup", {
+        fetch("/api/v1/members/public/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

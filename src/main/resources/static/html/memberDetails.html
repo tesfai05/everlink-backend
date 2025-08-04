@@ -70,6 +70,7 @@
     <div id="memberDetailsSection">
         <h3 class="member-detail">Hello, <span id="memberName"></span>, thank you for being a member of EverLink Holding.</h3>
         <h3>Your detail information is below:</h3>
+        <p>Member Id: <span id="memberId"></span></p>
         <p>Full Name: <span id="fullName"></span></p>
         <p>Email: <span id="email"></span></p>
         <p>Marital Status: <span id="maritalStatus"></span></p>
@@ -138,7 +139,7 @@
     });
 
     function logout() {
-        fetch("/api/v1/members/logout", {
+        fetch("/api/v1/members/public/logout", {
             method: "POST",
             credentials: "include"
         }).then(() => {
@@ -158,6 +159,7 @@
     if (memberData) {
         const member = JSON.parse(memberData);
         document.getElementById("memberName").textContent = member.fullName;
+        document.getElementById("memberId").textContent = member.memberId;
         document.getElementById("fullName").textContent = member.fullName;
         document.getElementById("maritalStatus").textContent = member.maritalStatus;
         document.getElementById("email").textContent = member.email;
@@ -193,7 +195,7 @@
         }
     }
     function refreshRecord(){
-        fetch("/api/v1/members/refresh-record", {
+        fetch("/api/v1/members/admin/refresh-record", {
             method: "GET",
             credentials: "include"
         }).then(() => {

@@ -189,7 +189,7 @@
             });
 
             function logout() {
-                fetch("/api/v1/members/logout", {
+                fetch("/api/v1/members/public/logout", {
                     method: "POST",
                     credentials: "include"
                 }).then(() => {
@@ -242,7 +242,7 @@
                     statusChangeDate: formatDate(rawScDate)
                 };
 
-                fetch(`/api/v1/members/update/${memberId}`, {
+                fetch(`/api/v1/members/admin/update/${memberId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
@@ -265,7 +265,7 @@
                     });
             });
             function refreshRecord(){
-                fetch("/api/v1/members/refresh-record", {
+                fetch("/api/v1/members/admin/refresh-record", {
                     method: "GET",
                     credentials: "include"
                 }).then(() => {

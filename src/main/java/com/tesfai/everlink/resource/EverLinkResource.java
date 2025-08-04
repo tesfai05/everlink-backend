@@ -44,12 +44,12 @@ public class EverLinkResource {
     }
 
 
-    @GetMapping
+    @GetMapping("/admin")
     public List<MemberDTO> getMembers(){
         return everLinkService.getMembers();
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/public/signin")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletRequest httpRequest) {
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword());
@@ -74,7 +74,7 @@ public class EverLinkResource {
                     .body(Map.of("error", "Invalid username or password"));
         }
     }
-    @PostMapping("/logout")
+    @PostMapping("/public/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
         HttpSession session = request.getSession(false);
@@ -84,7 +84,7 @@ public class EverLinkResource {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/public/signup")
     public ResponseEntity<?> signup(@RequestBody UserDTO userDTO){
         try {
             String username = userDTO.getUsername();
@@ -113,7 +113,7 @@ public class EverLinkResource {
         }
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/public/change-password")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO){
         try {
             String memberId = userDTO.getMemberId();
@@ -146,7 +146,7 @@ public class EverLinkResource {
         }
     }
 
-    @PostMapping("/admin")
+    @PostMapping("/admin/update-user")
     public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO){
         try {
             String memberId = userDTO.getMemberId();
@@ -169,13 +169,13 @@ public class EverLinkResource {
         }
     }
 
-    @GetMapping("/refresh-record")
+    @GetMapping("/admin/refresh-record")
     public ResponseEntity<?> refreshRecord(){
         everLinkService.refreshRecord();
         return ResponseEntity.ok("Record refreshed.");
     }
 
-    @PostMapping("/register")
+    @PostMapping("/admin/register")
     public ResponseEntity<?> registerMember(@RequestBody MemberDTO memberDTO){
         try {
             String joinDate = memberDTO.getJoinDate();
@@ -198,7 +198,7 @@ public class EverLinkResource {
         }
     }
 
-    @PostMapping("/update/{memberId}")
+    @PostMapping("/admin/update/{memberId}")
     public ResponseEntity<?> updateMember(@PathVariable String memberId, @RequestBody MemberDTO memberDTO){
         try {
             LocalDate now = LocalDate.now();
@@ -241,33 +241,33 @@ public class EverLinkResource {
 
     }
 
-    @GetMapping("/retrieve/{memberId}")
+    @GetMapping("/user/retrieve/{memberId}")
     public ResponseEntity<?>  retrieveMember(@PathVariable String  memberId){
         return ResponseEntity.ok(everLinkService.retrieveMember(memberId));
     }
 
-    @DeleteMapping("/delete/{memberId}")
+    @DeleteMapping("/admin/delete/{memberId}")
     public String deleteMember(@PathVariable String memberId){
         return everLinkService.deleteMember(memberId);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/admin/delete")
     public String deleteMemberAll(){
         return everLinkService.deleteMember();
     }
 
-    @GetMapping("/reset")
+    @GetMapping("/admin/reset")
     public String  resetData(){
         return everLinkService.resetData();
     }
 
-    @PostMapping("/email/send")
+    @PostMapping("/admin/email/send")
     public String sendEmailToAllMembers( @RequestBody EmailDTO emailDTO) {
         emailService.sendEmailToMembers(emailDTO.getSubject(), emailDTO.getBody());
         return "Email sent to members";
     }
 
-    @GetMapping("/health-check")
+    @GetMapping("/public/health-check")
     public String  healthCheck(){
         return "APPISUPNOW";
     }
