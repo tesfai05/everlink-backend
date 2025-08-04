@@ -35,18 +35,18 @@ public class SecurityConfig {
                                  "/css/**",
                                  "/image/**",
                                 "/index.html",
-                                "/signin.html",
-                                "/signup.html",
-                                "/footer.html",
+                                "/html/signin.html",
+                                "/html/signup.html",
+                                "/html/footer.html",
                                 "/api/v1/members/signin",
                                 "/api/v1/members/signup",
+                                "/html/changePassword.html",
                                 "/api/v1/members/change-password",
                                 "/docs/everlink_member_policy_tig.pdf",
-                                "/docs/everlink_member_policy_en.pdf",
-                                "/changePassword.html"
+                                "/docs/everlink_member_policy_en.pdf"
                         ).permitAll()
-                        .requestMatchers("/register.html", "/list.html", "/email.html", "/admin.html").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/members/**", "/memberDetails.html").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/members/**", "/html/memberDetails.html").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())

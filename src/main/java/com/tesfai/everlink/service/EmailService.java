@@ -24,7 +24,7 @@ public class EmailService implements IEmailService{
         this.everLinkRepository = everLinkRepository;
         this.mailSender = mailSender;
     }
-
+    @Override
     public void sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(everLinkEmail);
@@ -33,7 +33,7 @@ public class EmailService implements IEmailService{
         message.setText(body);
         mailSender.send(message);
     }
-
+    @Override
     public void sendEmailToMembers(String subject, String body) {
         List<String> emails = everLinkRepository.findAll()
                 .stream()

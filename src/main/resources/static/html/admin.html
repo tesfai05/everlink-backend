@@ -2,31 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Signup Form</title>
-    <link rel="stylesheet" href="/css/common.css">
-    <link rel="stylesheet" href="/css/forms.css">
+    <title>Make Admin Form</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/forms.css">
 </head>
 <body>
     <div class="container">
         <div class="site-header">
             <nav id="main-nav">
-                <a href="index.html">Home</a>
-                <a href="signup.html">Signup</a>
-                <a href="signin.html">Login</a>
-                <a href="memberDetails.html">Profile</a>
-                <a href="register.html">Register</a>
-                <a href="list.html">Members</a>
-                <a href="email.html">Send Notification</a>
-                <a href="admin.html">Update User Role</a>
+                <a href="/index.html">Home</a>
+                <a href="/html/signup.html">Signup</a>
+                <a href="/html/signin.html">Login</a>
+                <a href="/html/memberDetails.html">Profile</a>
+                <a href="/html/register.html">Register</a>
+                <a href="/html/list.html">Members</a>
+                <a href="/html/email.html">Send Notification</a>
+                <a href="/html/admin.html">Update User Role</a>
                 <a href="#" id="refresh-record" style="display: none;" onclick="refreshRecord()">Refresh Record</a>
                 <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
             </nav>
             <hr>
         </div>
-        <h2>Signup With EverLink Holding</h2>
-        <small>To signup with us, first you need to be an active member of Everlink Holding LLC. Please contact us at <strong>everlinkholdingllc@gmail.com</strong> to be registered as a member.</small>
-        <br><br>
-        <form id="signupForm">
+        <h2>Update User Form</h2>
+        <form id="makeAdminForm">
             <div class="form-group">
                 <label for="memberId">Member ID:</label>
                 <input
@@ -47,18 +45,8 @@
                 >
                 <small>Must be at least 5 characters : alphabets and numbers only.</small>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                >
-                <small>Must be at least 5 characters : alphabets and numbers only.</small>
-            </div>
             <div class="button-group">
-                <button type="submit">Signup</button>
+                <button type="submit">Update User</button>
             </div>
         </form>
         <div id="footer"></div>
@@ -70,9 +58,9 @@
             <p id="errorMessage"></p>
         </div>
     </div>
-    <script src="js/common.js"></script>
+    <script src="../js/common.js"></script>
     <script>
-        setupSignupForm();
+        setupMakeAdminForm();
     </script>
 </body>
 </html>

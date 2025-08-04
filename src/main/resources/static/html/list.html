@@ -202,14 +202,14 @@
         <div class="container">
             <div class="site-header">
                 <nav id="main-nav">
-                    <a href="index.html">Home</a>
-                    <a href="signup.html">Signup</a>
-                    <a href="signin.html">Login</a>
-                    <a href="memberDetails.html">Profile</a>
-                    <a href="register.html">Register</a>
-                    <a href="list.html">Members</a>
-                    <a href="email.html">Send Notification</a>
-                    <a href="admin.html">Update User Role</a>
+                    <a href="/index.html">Home</a>
+                    <a href="/html/signup.html">Signup</a>
+                    <a href="/html/signin.html">Login</a>
+                    <a href="/html/memberDetails.html">Profile</a>
+                    <a href="/html/register.html">Register</a>
+                    <a href="/html/list.html">Members</a>
+                    <a href="/html/email.html">Send Notification</a>
+                    <a href="/html/admin.html">Update User Role</a>
                     <a href="#" id="refresh-record" style="display: none;" onclick="refreshRecord()">Refresh Record</a>
                     <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
                 </nav>
@@ -239,8 +239,8 @@
                 </table>
             </div>
             <div class="action-buttons">
-                <button onclick="window.location.href='register.html'">Register</button>
-                <button onclick="window.location.href='index.html'">Home</button>
+                <button onclick="window.location.href='/html/register.html'">Register</button>
+                <button onclick="window.location.href='/index.html'">Home</button>
             </div>
             <div id="footer"></div>
         </div>
@@ -269,9 +269,9 @@
             const links = Array.from(nav.querySelectorAll("a"));
 
             // Define restricted links by role
-            const restrictedForNone = ["register.html", "list.html", "email.html", "admin.html", "memberDetails.html"];
-            const restrictedForUser = ["register.html", "list.html", "email.html", "admin.html", "signup.html", "signin.html"];
-            const restrictedForAdmin = ["signup.html", "signin.html"];
+            const restrictedForNone = ["/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html", "/html/memberDetails.html"];
+            const restrictedForUser = ["/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html", "/html/signup.html", "/html/signin.html"];
+            const restrictedForAdmin = ["/html/signup.html", "/html/signin.html"];
 
             // Hide links based on role
             if (user === null) {
@@ -321,7 +321,7 @@
                     credentials: "include"
                 }).then(() => {
                     localStorage.removeItem("user"); // Clear user info from localStorage
-                    window.location.href = "index.html"; // Redirect to home
+                    window.location.href = "/index.html"; // Redirect to home
                 }).catch(err => console.error("Logout failed:", err));
             }
 
@@ -364,7 +364,7 @@
                 })
                 .then(member => {
                     localStorage.setItem("editMember", JSON.stringify(member));
-                    window.location.href = "update.html";
+                    window.location.href = "/html/update.html";
                 })
                 .catch(error => {
                     error => showErrorModal(error.message || "An unexpected error occurred.")
@@ -395,11 +395,11 @@
                     method: "GET",
                     credentials: "include"
                 }).then(() => {
-                    window.location.href = "index.html"; // Redirect to home
+                    window.location.href = "/index.html"; // Redirect to home
                 }).catch(err => console.error("Refresh record failed:", err));
             }
             // Inject footer
-            fetch("footer.html")
+            fetch("/html/footer.html")
                 .then(res => res.text())
                 .then(data => document.getElementById("footer").innerHTML = data);
             //Error Modal

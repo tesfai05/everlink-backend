@@ -4,9 +4,9 @@ const nav = document.getElementById("main-nav");
 const links = Array.from(nav.querySelectorAll("a"));
 
 // Define restricted links by role
-const restrictedForNone = ["register.html", "list.html", "email.html", "admin.html", "memberDetails.html", "logout"];
-const restrictedForUser = ["register.html", "list.html", "email.html", "admin.html", "signup.html", "signin.html"];
-const restrictedForAdmin = ["signup.html", "signin.html"];
+const restrictedForNone = ["/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html", "/html/memberDetails.html"];
+const restrictedForUser = ["/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html", "/html/signup.html", "/html/signin.html"];
+const restrictedForAdmin = ["/html/signup.html", "/html/signin.html"];
 
 // Hide links based on role
 if (user === null) {
@@ -58,7 +58,7 @@ function logout() {
         credentials: "include"
     }).then(() => {
         localStorage.removeItem("user"); // Clear user info from localStorage
-        window.location.href = "index.html"; // Redirect to home
+        window.location.href = "/index.html"; // Redirect to home
     }).catch(err => console.error("Logout failed:", err));
 }
 
@@ -67,12 +67,12 @@ function refreshRecord(){
         method: "GET",
         credentials: "include"
     }).then(() => {
-        window.location.href = "index.html"; // Redirect to home
+        window.location.href = "/index.html"; // Redirect to home
     }).catch(err => console.error("Refresh record failed:", err));
 }
 
 // Inject footer
-fetch("footer.html")
+fetch("/html/footer.html")
     .then(res => res.text())
     .then(data => document.getElementById("footer").innerHTML = data);
 
@@ -96,33 +96,6 @@ window.onclick = function(event) {
     }
 };
 
-//Admin.html
-//document.getElementById("makeAdminForm").addEventListener("submit", function(e) {
-//    e.preventDefault();
-//
-//    const user = {
-//        memberId: document.getElementById("memberId").value,
-//        username: document.getElementById("username").value
-//    };
-//
-//    fetch("/api/v1/members/admin", {
-//        method: "POST",
-//        headers: { "Content-Type": "application/json" },
-//        credentials: "include",
-//        body: JSON.stringify(user)
-//    })
-//        .then(res => {
-//        if (res.ok) {
-//            window.location.href = "index.html";
-//        } else {
-//            return res.text().then(errorMessage => {
-//                throw new Error(errorMessage || "Unknown error occurred");
-//            });
-//        }
-//    })
-//        .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
-//});
-
 function setupMakeAdminForm() {
     const form = document.getElementById("makeAdminForm");
     if (!form) return; // Skip if not on the admin page
@@ -143,7 +116,7 @@ function setupMakeAdminForm() {
         })
             .then(res => {
             if (res.ok) {
-                window.location.href = "index.html";
+                window.location.href = "/index.html";
             } else {
                 return res.text().then(errorMessage => {
                     throw new Error(errorMessage || "Unknown error occurred");
@@ -174,7 +147,7 @@ function setupChangePasswordForm() {
         })
             .then(res => {
             if (res.ok) {
-                window.location.href = "signin.html";
+                window.location.href = "/html/signin.html";
             } else {
                 return res.text().then(errorMessage => {
                     throw new Error(errorMessage || "Unknown error occurred");
@@ -201,7 +174,7 @@ function setupNotificationForm() {
         })
             .then(res => {
             if (res.ok) {
-                window.location.href = "index.html";
+                window.location.href = "/index.html";
             } else {
                 return res.text().then(errorMessage => {
                     throw new Error(errorMessage || "Unknown error occurred");
@@ -239,7 +212,7 @@ function setupRegistrationForm(){
         })
             .then(res => {
             if (res.ok) {
-                window.location.href = "list.html";
+                window.location.href = "/html/list.html";
             } else {
                 return res.text().then(errorMessage => {
                     throw new Error(errorMessage || "Registration failed. Please check your input.");
@@ -291,7 +264,7 @@ function setupSigninForm() {
             .then(member => {
             // Save full member info
             localStorage.setItem("member", JSON.stringify(member));
-            window.location.href = "index.html";
+            window.location.href = "/index.html";
         })
             .catch(error => {
             console.error(error);
@@ -318,7 +291,7 @@ function setupSignupForm(){
         })
             .then(res => {
             if (res.ok) {
-                window.location.href = "signin.html";
+                window.location.href = "/html/signin.html";
             } else {
                 return res.text().then(errorMessage => {
                     throw new Error(errorMessage || "Unknown error occurred");
