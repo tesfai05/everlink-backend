@@ -5,103 +5,182 @@
         <title>Edit Member</title>
         <style>
             body {
-              font-family: Arial, sans-serif;
-              background: #f4f4f4;
-              padding: 30px;
-              margin: 0;
+                font-family: Arial, sans-serif;
+                background: #f4f4f4;
+                padding: 30px;
+                margin: 0;
             }
 
-            .container {
-              max-width: 500px;
-              margin: auto;
-              background-color: #fff;
-              padding: 30px;
-              border-radius: 10px;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            .custom-container {
+                max-width: 500px;
+                margin: auto;
+                background-color: #fff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             }
 
-            h2 {
-              text-align: center;
-              color: #5694d7;
-              margin-bottom: 30px;
+            h4 {
+                text-align: center;
+                color: #5694d7;
+                margin-bottom: 30px;
             }
 
             .form-group {
-              margin-bottom: 20px;
+                margin-bottom: 20px;
             }
 
             label {
-              display: block;
-              font-weight: bold;
-              margin-bottom: 8px;
-              color: #333;
+                display: block;
+                font-weight: bold;
+                margin-bottom: 8px;
+                color: #333;
             }
 
             input, select {
-              width: 100%;
-              padding: 10px;
-              font-size: 14px;
-              border: 1px solid #ccc;
-              border-radius: 6px;
-              box-sizing: border-box;
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                box-sizing: border-box;
             }
 
             button[type="submit"] {
-              width: 100%;
-              padding: 12px;
-              background: #28a745;
-              color: white;
-              font-size: 16px;
-              border: none;
-              border-radius: 6px;
-              cursor: pointer;
-              margin-top: 10px;
-              transition: background-color 0.3s;
+                width: 100%;
+                padding: 12px;
+                background: #516e8e;
+                color: white;
+                font-size: 16px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                margin-top: 10px;
+                transition: background-color 0.3s;
             }
 
             button[type="submit"]:hover {
-              background: #218838;
+                background: #069ff1;
             }
 
             .message {
-              text-align: center;
-              margin-top: 20px;
-              font-weight: bold;
+                text-align: center;
+                margin-top: 20px;
+                font-weight: bold;
             }
 
             .success {
-              color: green;
+                color: green;
             }
 
             .error {
-              color: red;
+                color: red;
             }
 
             @media screen and (max-width: 600px) {
-              .container {
-                padding: 20px;
-              }
+                .custom-container {
+                    padding: 20px;
+                }
+            }
+            /* Navbar styling */
+            .navbar {
+                background-color: #516e8e;
+            }
+
+            .navbar .nav-link {
+                color: white !important;
+            }
+
+            .navbar .nav-link:hover,
+            .navbar .dropdown-item:hover {
+                background-color: #069ff1;
+            }
+
+            /* Dropdown menu colors */
+            .navbar .dropdown-menu {
+                background-color: #516e8e;
+            }
+
+            .navbar .dropdown-item {
+                color: white !important;
+            }
+
+
+            .navbar-nav {
+                overflow: visible !important;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .navbar-nav .nav-item {
+                flex: 0 0 auto;
+            }
+
+
+            .navbar-collapse {
+                overflow: visible !important;
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                z-index: 1050;
             }
         </style>
+        <!-- Bootstrap CSS -->
+        <link
+                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+                rel="stylesheet"
+                integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+                crossorigin="anonymous"
+        >
     </head>
     <body>
-        <div class="container">
-            <div class="site-header">
-                <nav id="main-nav">
-                    <a href="/index.html">Home</a>
-                    <a href="/html/signup.html">Signup</a>
-                    <a href="/html/signin.html">Login</a>
-                    <a href="/html/memberDetails.html">Profile</a>
-                    <a href="/html/register.html">Register</a>
-                    <a href="/html/list.html">Members</a>
-                    <a href="/html/email.html">Send Notification</a>
-                    <a href="/html/admin.html">Update User Role</a>
-                    <a href="#" id="refresh-record" style="display: none;" onclick="refreshRecord()">Refresh Record</a>
-                    <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
-                </nav>
-                <hr>
-            </div>
-            <h2>Update EverLink Holding Member Details</h2>
+        <div class="custom-container">
+            <nav class="navbar navbar-expand-lg navbar-light ">
+                <!-- Toggler button for mobile view -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar links -->
+                <div class="collapse navbar-collapse overflow-x-auto" id="navbarSupportedContent">
+                    <ul class="navbar-nav flex-nowrap">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/index.html">Home <span class="visually-hidden">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/signup.html">Signup</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/signin.html">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/memberDetails.html">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/register.html">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/list.html">Members</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/email.html">Send Notification</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/html/admin.html">Update User Role</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-none" href="#" id="refresh-record" onclick="refreshRecord()">Refresh Record</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-none" href="#" id="logout-link" onclick="logout()">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav> </br>
+            <h4>Update Member Details</h4>
             <form id="memberForm">
                 <div class="form-group">
                     <label for="fullName">Full Name:</label>
@@ -137,56 +216,84 @@
             <div id="footer"></div>
         </div>
         <script>
+            //Timeout
+            let logoutTimer;
+            const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 min
+
+            function resetTimer() {
+                clearTimeout(logoutTimer);
+                logoutTimer = setTimeout(() => {
+                    localStorage.removeItem("user");
+                    showErrorModal("You have been logged out due to inactivity.");
+                    window.location.href = "/html/signin.html";
+                }, INACTIVITY_LIMIT);
+            }
+
+            //COMMON
             const user = JSON.parse(localStorage.getItem("user"));
-            const nav = document.getElementById("main-nav");
-            const links = Array.from(nav.querySelectorAll("a"));
+            const member = JSON.parse(localStorage.getItem("member"));
 
-            // Define restricted links by role
-            const restrictedForNone = ["/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html", "/html/memberDetails.html"];
-            const restrictedForUser = ["/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html", "/html/signup.html", "/html/signin.html"];
-            const restrictedForAdmin = ["/html/signup.html", "/html/signin.html"];
+            // Define role-based restrictions
+            const restrictedForNone = [
+                "/html/register.html", "/html/list.html", "/html/email.html",
+                "/html/admin.html", "/html/memberDetails.html", "/html/spouse.html",
+                "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
+            ];
+            const restrictedForUser = [
+                "/html/register.html", "/html/list.html", "/html/email.html",
+                "/html/admin.html", "/html/signup.html", "/html/signin.html"
+            ];
+            const restrictedForAdmin = [
+                "/html/signup.html", "/html/signin.html"
+            ];
 
-            // Hide links based on role
-            if (user === null) {
-                links.forEach(link => {
-                    if (restrictedForNone.some(r => link.href.includes(r))) {
-                        link.style.display = "none";
-                    }
-                });
-            } else if (user?.roles[0].name === 'USER') {
-                links.forEach(link => {
-                    if (restrictedForUser.some(r => link.href.includes(r))) {
-                        link.style.display = "none";
-                    }
-                });
-            } else if (user?.roles[0].name === 'ADMIN') {
-                links.forEach(link => {
-                    if (restrictedForAdmin.some(r => link.href.includes(r))) {
-                        link.style.display = "none";
-                    }
-                });
-            }
-            if (user?.roles?.[0]?.name === 'USER' || user?.roles?.[0]?.name === 'ADMIN') {
-                document.getElementById("logout-link").style.display = "inline";
-            } else {
-                document.getElementById("logout-link").style.display = "none";
-            }
-            if (user?.roles?.[0]?.name === 'ADMIN') {
-                document.getElementById("refresh-record").style.display = "inline";
-            } else {
-                document.getElementById("refresh-record").style.display = "none";
-            }
-            // Add separator (|) between visible links
-            const visibleLinks = links.filter(link => link.style.display !== "none");
-            nav.innerHTML = ''; // clear nav
+            const restrictedForSuperAdmin = [
+                "/html/signup.html", "/html/signin.html", "/html/memberDetails.html",
+                "/html/spouse.html", "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
+            ];
 
-            visibleLinks.forEach((link, index) => {
-                nav.appendChild(link);
-                if (index < visibleLinks.length - 1) {
-                    const separator = document.createTextNode(" | ");
-                    nav.appendChild(separator);
+            // Get role safely
+            const role = user?.roles?.[0]?.name?.toUpperCase() || null;
+
+            // Choose restriction list
+            function getRestrictedLinks(role) {
+                if (role === "SUPER_ADMIN") return restrictedForSuperAdmin;
+                if (role === "ADMIN") return restrictedForAdmin;
+                if (role === "USER") return restrictedForUser;
+                return restrictedForNone;
+            }
+            const restrictedList = getRestrictedLinks(role);
+
+            // Hide restricted links in the navbar
+            const navLinks = document.querySelectorAll(".navbar-nav a");
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute("href");
+                if (!href) return;
+
+                const path = new URL(href, window.location.origin).pathname;
+
+                if (restrictedList.includes(path)) {
+                    const li = link.closest("li.nav-item");
+                    if (li) li.style.display = "none";
+                    else link.style.display = "none";
                 }
             });
+
+            // Show/Hide Logout and Refresh Record links
+            const logoutLink = document.getElementById("logout-link");
+            const refreshLink = document.getElementById("refresh-record");
+
+            if (logoutLink) {
+                logoutLink.classList.toggle("d-none", !(role === "USER" || role === "ADMIN" || role === "SUPER_ADMIN"));
+            }
+
+            if (refreshLink) {
+                refreshLink.classList.toggle("d-none", (role !== "ADMIN" || role === "SUPER_ADMIN"));
+            }
+            if (member!==null && member.maritalStatus !== "Married") {
+                document.getElementById("spouse-link").style.display = "none";
+            }
 
             function logout() {
                 fetch("/api/v1/members/public/logout", {
@@ -277,5 +384,7 @@
                 .then(res => res.text())
                 .then(data => document.getElementById("footer").innerHTML = data);
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
     </body>
 </html>

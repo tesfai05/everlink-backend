@@ -5,25 +5,60 @@
     <title>Make Admin Form</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/forms.css">
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+            crossorigin="anonymous"
+    >
 </head>
 <body>
-    <div class="container">
-        <div class="site-header">
-            <nav id="main-nav">
-                <a href="/index.html">Home</a>
-                <a href="/html/signup.html">Signup</a>
-                <a href="/html/signin.html">Login</a>
-                <a href="/html/memberDetails.html">Profile</a>
-                <a href="/html/register.html">Register</a>
-                <a href="/html/list.html">Members</a>
-                <a href="/html/email.html">Send Notification</a>
-                <a href="/html/admin.html">Update User Role</a>
-                <a href="#" id="refresh-record" style="display: none;" onclick="refreshRecord()">Refresh Record</a>
-                <a href="#" id="logout-link" style="display: none;" onclick="logout()">Logout</a>
-            </nav>
-            <hr>
-        </div>
-        <h2>Update User Form</h2>
+    <div class="custom-container">
+        <nav class="navbar navbar-expand-lg navbar-light ">
+            <!-- Toggler button for mobile view -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse overflow-x-auto" id="navbarSupportedContent">
+                <ul class="navbar-nav flex-nowrap">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/index.html">Home <span class="visually-hidden">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/signup.html">Signup</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/signin.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/memberDetails.html">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/register.html">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/list.html">Members</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/email.html">Send Notification</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/html/admin.html">Update User Role</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-none" href="#" id="refresh-record" onclick="refreshRecord()">Refresh Record</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-none" href="#" id="logout-link" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav> </br>
+        <h4>Update User Form</h4>
         <form id="makeAdminForm">
             <div class="form-group">
                 <label for="memberId">Member ID:</label>
@@ -62,5 +97,7 @@
     <script>
         setupMakeAdminForm();
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
 </body>
 </html>

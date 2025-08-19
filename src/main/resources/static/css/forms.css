@@ -1,4 +1,4 @@
-.container {
+.custom-container {
     max-width: 500px;
     margin: auto;
     background-color: #fff;
@@ -88,6 +88,30 @@ span {
 }
 .forgot-password a:hover {
     text-decoration: underline;
+}
+
+.beneficiary-entry {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+.remove-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-top: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.beneficiary-card {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    background: #f9f9f9;
 }
 
 

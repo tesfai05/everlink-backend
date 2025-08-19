@@ -1,9 +1,10 @@
 package com.tesfai.everlink.service;
 
-import com.tesfai.everlink.dto.MemberDTO;
-import com.tesfai.everlink.dto.UserDTO;
+import com.tesfai.everlink.dto.*;
 import com.tesfai.everlink.entity.User;
+import org.springframework.dao.DataIntegrityViolationException;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +25,12 @@ public interface IEverLinkService {
 
     void refreshRecord();
     String resetData();
+
+    void addBeneficiaries(BeneficiaryFormDTO beneficiaryFormDTO);
+
+    List<BeneficiaryDTO> retrieveBeneficiaries(String grantorId);
+
+    void addSpouse(SpouseDTO spouseDTO) throws SQLIntegrityConstraintViolationException, DataIntegrityViolationException;
+
+    SpouseDTO retrieveSpouse(String grantorId);
 }

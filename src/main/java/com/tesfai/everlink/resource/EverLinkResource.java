@@ -1,8 +1,6 @@
 package com.tesfai.everlink.resource;
 
-import com.tesfai.everlink.dto.EmailDTO;
-import com.tesfai.everlink.dto.MemberDTO;
-import com.tesfai.everlink.dto.UserDTO;
+import com.tesfai.everlink.dto.*;
 import com.tesfai.everlink.entity.User;
 import com.tesfai.everlink.service.IEmailService;
 import com.tesfai.everlink.service.IEverLinkService;
@@ -11,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -241,11 +241,6 @@ public class EverLinkResource {
 
     }
 
-    @GetMapping("/user/retrieve/{memberId}")
-    public ResponseEntity<?>  retrieveMember(@PathVariable String  memberId){
-        return ResponseEntity.ok(everLinkService.retrieveMember(memberId));
-    }
-
     @DeleteMapping("/admin/delete/{memberId}")
     public String deleteMember(@PathVariable String memberId){
         return everLinkService.deleteMember(memberId);
@@ -270,5 +265,69 @@ public class EverLinkResource {
     @GetMapping("/public/health-check")
     public String  healthCheck(){
         return "APPISUPNOW";
+    }
+
+
+    @GetMapping("/user/retrieve/{memberId}")
+    public ResponseEntity<?>  retrieveMember(@PathVariable String  memberId){
+        return ResponseEntity.ok(everLinkService.retrieveMember(memberId));
+    }
+
+    @PostMapping("/user/add-beneficiaries")
+    public ResponseEntity<?> addBeneficiaries(@RequestBody BeneficiaryFormDTO beneficiaryFormDTO) {
+        //Check memberId is valid
+        String memberId = beneficiaryFormDTO.getGrantorId();
+        List<String> memberIdList = everLinkService.getMembers().stream()
+                .map(m -> m.getMemberId())
+                .collect(Collectors.toList());
+        if(!memberIdList.contains(memberId)){
+            return ResponseEntity.badRequest().body("Invalid grantor ID.");
+        }
+        everLinkService.addBeneficiaries(beneficiaryFormDTO);
+        return ResponseEntity.ok("Beneficiaries added successfully");
+    }
+
+    @GetMapping("/user/retrieve-beneficiaries/{grantorId}")
+    public ResponseEntity<?> retrieveBeneficiaries(@PathVariable String grantorId) {
+        //Check memberId is valid
+        List<String> memberIdList = everLinkService.getMembers().stream()
+                .map(m -> m.getMemberId())
+                .collect(Collectors.toList());
+        if(!memberIdList.contains(grantorId)){
+            return ResponseEntity.badRequest().body("Invalid grantor ID.");
+        }
+        List<BeneficiaryDTO> beneficiaries = everLinkService.retrieveBeneficiaries(grantorId);
+        return ResponseEntity.ok(beneficiaries);
+    }
+
+    @PostMapping("/user/add-spouse")
+    public ResponseEntity<?> addSpouse(@RequestBody SpouseDTO spouseDTO) {
+        //Check memberId is valid
+        String memberId = spouseDTO.getGrantorId();
+        List<String> memberIdList = everLinkService.getMembers().stream()
+                .map(m -> m.getMemberId())
+                .collect(Collectors.toList());
+        if(!memberIdList.contains(memberId)){
+            return ResponseEntity.badRequest().body("Invalid grantor ID.");
+        }
+        try {
+            everLinkService.addSpouse(spouseDTO);
+        } catch (SQLIntegrityConstraintViolationException | DataIntegrityViolationException e) {
+            return ResponseEntity.ok("You have already added your spouse.");
+        }
+        return ResponseEntity.ok("Spouse added successfully");
+    }
+
+    @GetMapping("/user/retrieve-spouse/{grantorId}")
+    public ResponseEntity<?> retrieveSpouse(@PathVariable String grantorId) {
+        //Check memberId is valid
+        List<String> memberIdList = everLinkService.getMembers().stream()
+                .map(m -> m.getMemberId())
+                .collect(Collectors.toList());
+        if(!memberIdList.contains(grantorId)){
+            return ResponseEntity.badRequest().body("Invalid grantor ID.");
+        }
+        SpouseDTO spouseDTO = everLinkService.retrieveSpouse(grantorId);
+        return ResponseEntity.ok(spouseDTO);
     }
 }

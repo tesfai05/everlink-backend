@@ -1,6 +1,8 @@
 package com.tesfai.everlink.dto;
 
 
+import java.util.List;
+
 public class MemberDTO {
     private String memberId;
     private String fullName;
@@ -17,6 +19,9 @@ public class MemberDTO {
     private Boolean isSignedUp;
     private Double currentMonthlyContribution;
     private Double previousMonthlyContribution;
+
+    private SpouseDTO spouse;
+    private List<BeneficiaryDTO> beneficiaries;
 
     public String getMemberId() {
         return memberId;
@@ -136,5 +141,21 @@ public class MemberDTO {
 
     public void setPreviousMonthlyContribution(Double previousMonthlyContribution) {
         this.previousMonthlyContribution = previousMonthlyContribution;
+    }
+
+    public SpouseDTO getSpouse() {
+        return spouse;
+    }
+
+    public void setSpouse(SpouseDTO spouse) {
+        this.spouse = spouse;
+    }
+
+    public List<BeneficiaryDTO> getBeneficiaries() {
+        return beneficiaries;
+    }
+
+    public void setBeneficiaries(List<BeneficiaryDTO> beneficiaries) {
+        this.beneficiaries = beneficiaries;
     }
 }

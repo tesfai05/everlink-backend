@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spouse Form</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <!-- Bootstrap CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+            crossorigin="anonymous"
+    >
+</head>
+<body>
+<div class="custom-container">
+    <nav class="navbar navbar-expand-lg navbar-light ">
+        <!-- Toggler button for mobile view -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse overflow-x-auto" id="navbarSupportedContent">
+            <ul class="navbar-nav flex-nowrap">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/index.html">Home <span class="visually-hidden">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/signup.html">Signup</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/signin.html">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/memberDetails.html">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/register.html">Register</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/list.html">Members</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/email.html">Send Notification</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/html/admin.html">Update User Role</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-none" href="#" id="refresh-record" onclick="refreshRecord()">Refresh Record</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-none" href="#" id="logout-link" onclick="logout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav> </br>
+    <h4>Add Spouse Information</h4>
+    <br>
+    <form id="spouseForm">
+        <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    required
+            >
+            <small>Enter first name and last name.</small>
+        </div>
+        <div class="form-group">
+            <label for="maritalStatus">Marital Status:</label>
+            <select id="maritalStatus" name="maritalStatus" required>
+                <option value="">-- Select --</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address:</label>
+            <input
+                    type="email"
+                    id="email"
+                    name="email"
+            >
+            <small>Must be a valid email.</small>
+        </div>
+        <div class="button-group">
+            <button type="submit">Add Spouse</button>
+        </div>
+    </form>
+    <div id="footer"></div>
+</div>
+<!-- Error Modal -->
+<div id="errorModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeErrorModal()">&times;</span>
+        <p id="errorMessage"></p>
+    </div>
+</div>
+<script src="../js/common.js"></script>
+<script>
+    setupSpouseForm();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+
+</body>
+</html>

@@ -1,24 +1,21 @@
 package com.tesfai.everlink.service;
 
-import com.tesfai.everlink.dto.UserDTO;
-import com.tesfai.everlink.entity.Role;
-import com.tesfai.everlink.entity.User;
+import com.tesfai.everlink.dto.*;
+import com.tesfai.everlink.entity.*;
 import com.tesfai.everlink.mapper.IEverLinkMapper;
-import com.tesfai.everlink.repository.IEverLinkRepository;
-import com.tesfai.everlink.repository.IRoleRepository;
-import com.tesfai.everlink.repository.IUserRepository;
+import com.tesfai.everlink.repository.*;
 import com.tesfai.everlink.utils.EverLinkUtils;
 import com.tesfai.everlink.constant.EverLinkConstants;
 import com.tesfai.everlink.constant.MartialStatusEnum;
 import com.tesfai.everlink.constant.MembershipEnum;
-import com.tesfai.everlink.dto.MemberDTO;
-import com.tesfai.everlink.entity.Member;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,13 +28,17 @@ public class EverLinkServiceImpl implements IEverLinkService{
     private final IUserRepository userRepository;
     private final IRoleRepository roleRepository;
     private final IEmailService emailService;
+    private final IBeneficiaryRepository beneficiaryRepository;
+    private final ISpouseRepository spouseRepository;
 
-    public EverLinkServiceImpl(IEverLinkRepository everLinkRepository, IEverLinkMapper everLinkMapper, IUserRepository userRepository, IRoleRepository roleRepository, IEmailService emailService) {
+    public EverLinkServiceImpl(IEverLinkRepository everLinkRepository, IEverLinkMapper everLinkMapper, IUserRepository userRepository, IRoleRepository roleRepository, IEmailService emailService, IBeneficiaryRepository beneficiaryRepository, ISpouseRepository spouseRepository) {
         this.everLinkRepository = everLinkRepository;
         this.everLinkMapper = everLinkMapper;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.emailService = emailService;
+        this.beneficiaryRepository = beneficiaryRepository;
+        this.spouseRepository = spouseRepository;
     }
 
 
@@ -49,7 +50,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
 
     @Override
     public MemberDTO registerMember(MemberDTO memberDTO) {
-        String memberId = generateMemberId(memberDTO);
+        String memberId = generateMemberId(memberDTO.getFullName());
         memberDTO.setMemberId(memberId);
         Member member = everLinkMapper.mapToEntity(memberDTO);
         Double mc = member.getMaritalStatus().equalsIgnoreCase(MartialStatusEnum.Married.name())? EverLinkConstants.MEMBER_CONTRIBUTION_MARRIED:EverLinkConstants.MEMBER_CONTRIBUTION_SINGLE;
@@ -63,19 +64,24 @@ public class EverLinkServiceImpl implements IEverLinkService{
         MemberDTO savedMemberSTO = everLinkMapper.mapToDto(List.of(savedMember)).get(0);
         //sent email
         String subject = "Membership Registration Confirmation. ";
-        String body = "Hi "+memberDTO.getFullName()+", \n\n"+
-                "Thank you for registering with EverLink Holding LLC.\n"+
-                "Your Member ID is:"+memberId+".\n"+
-                "Please keep this ID in a safe place, as you will need it to create and manage your account with us.\n"+
-                "We’re glad to have you as part of our community!\n\n"+
-                "Warm Regards,\n"+
-                "EverLink Holding LLC Support Team";
+        String body = """
+                        Hi %s,
+                    
+                        Thank you for registering with EverLink Holding LLC.
+                        Your Member ID is: %s.
+                        Please keep this ID in a safe place, as you will need it to create and manage your account with us.
+                        We’re glad to have you as part of our community!
+                    
+                        Warm Regards,
+                        EverLink Holding LLC Support Team.
+                        """.formatted(memberDTO.getFullName(), memberId);
+
         emailService.sendEmail(memberDTO.getEmail(), subject, body);
         return savedMemberSTO;
     }
 
-    private String generateMemberId(MemberDTO memberDTO) {
-        String[] split = memberDTO.getFullName().split("\s");
+    private String generateMemberId(String fullName) {
+        String[] split = fullName.split("\s");
         char firstInitial = Character.toUpperCase(split[0].charAt(0));
         char lastInitial = Character.toUpperCase(split[1].charAt(0));
         int randomNumber = new Random().nextInt(900) + 100;
@@ -98,23 +104,32 @@ public class EverLinkServiceImpl implements IEverLinkService{
                 member.setStatusChanged(true);
                 //sent email
                 String subject = " Marital Status Update Confirmation. ";
-                String body = "Hi "+member.getFullName()+", \n\n"+
-                        "Congratulations! Your status has been successfully updated to "+memberDTO.getMaritalStatus()+
-                        ", effective "+changeDate+".\n"+
-                        "We wish you happiness and joy in this new chapter of your life\n\n"+
-                        "Warm Regards,\n"+
-                        "EverLink Holding LLC Support Team";
+                String body = """
+                        Hi %s,
+                    
+                        Congratulations! Your status has been successfully updated to %s , effective %s.
+                        We wish you happiness and joy in this new chapter of your life.
+                    
+                        Warm Regards,
+                        EverLink Holding LLC Support Team.
+                        """.formatted(memberDTO.getFullName(), memberDTO.getMaritalStatus(), changeDate);
                 emailService.sendEmailOnUpdateInfo(subject, body, member.getMemberId());
             }
             member = everLinkMapper.updateMember(member, memberDTO);
             if(memberDTO.getLeaveDate()!=null){
                 //sent email
                 String subject = "Farewell and Best Wishes. ";
-                String body = "Hi "+member.getFullName()+", \n\n"+
-                        "We are sorry to hear that you are leaving our partnership LLC as of "+member.getLeaveDate()+". Your contributions have been truly appreciated, and you will be missed.\n"+
-                        "You are always welcome to return to the community at any time that is convenient for you. We wish you all the best in your future endeavors.\n\n"+
-                        "Warm Regards,\n"+
-                        "EverLink Holding LLC Support Team";
+                String body = """
+                        Hi %s,
+                    
+                        We are sorry to hear that you are leaving our partnership LLC as of %s. 
+                        Your contributions have been truly appreciated, and you will be missed.
+                        You are always welcome to return to the community at any time that is convenient for you. 
+                        We wish you all the best in your future endeavors.
+                        
+                        Warm Regards,
+                        EverLink Holding LLC Support Team.
+                        """.formatted(memberDTO.getFullName(), member.getLeaveDate());
                 emailService.sendEmailOnUpdateInfo(subject, body, member.getMemberId());
             }
             updatedMember = everLinkRepository.save(member);
@@ -141,6 +156,57 @@ public class EverLinkServiceImpl implements IEverLinkService{
                 })
                 .collect(Collectors.toList());
         return "Successfully reset !!!";
+    }
+
+    @Override
+    public void addBeneficiaries(BeneficiaryFormDTO beneficiaryFormDTO) {
+        for(BeneficiaryDTO b : beneficiaryFormDTO.getBeneficiaries()){
+            Beneficiary beneficiary = new Beneficiary();
+            beneficiary.setGrantorId(beneficiaryFormDTO.getGrantorId());
+            beneficiary.setBeneficiaryId(generateMemberId(b.getFullName()));
+            beneficiary.setFullName(b.getFullName());
+            beneficiary.setMaritalStatus(b.getMaritalStatus());
+            beneficiary.setEmail(b.getEmail());
+            beneficiaryRepository.save(beneficiary);
+        }
+    }
+
+    @Override
+    public List<BeneficiaryDTO> retrieveBeneficiaries(String grantorId) {
+        List<Beneficiary> beneficiaries = beneficiaryRepository.findByGrantorId(grantorId);
+        List<BeneficiaryDTO> beneficiaryDTOList = new ArrayList<>();
+        if(beneficiaries!=null && beneficiaries.size()>0) {
+            for(Beneficiary beneficiary : beneficiaries){
+                BeneficiaryDTO beneficiaryDTO = everLinkMapper.mapToBeneficiaryDTO(beneficiary);
+                beneficiaryDTOList.add(beneficiaryDTO);
+            }
+        }
+        return beneficiaryDTOList;
+    }
+
+    @Override
+    public void addSpouse(SpouseDTO spouseDTO) throws SQLIntegrityConstraintViolationException, DataIntegrityViolationException {
+        Spouse spouse = new Spouse();
+        spouse.setGrantorId(spouseDTO.getGrantorId());
+        spouse.setSpouseId(generateMemberId(spouseDTO.getFullName()));
+        spouse.setFullName(spouseDTO.getFullName());
+        spouse.setMaritalStatus(spouseDTO.getMaritalStatus());
+        spouse.setEmail(spouseDTO.getEmail());
+        spouseRepository.save(spouse);
+    }
+
+    @Override
+    public SpouseDTO retrieveSpouse(String grantorId) {
+        Spouse spouse = spouseRepository.findByGrantorId(grantorId);
+        SpouseDTO spouseDTO = new SpouseDTO();
+        if(spouse!=null) {
+            spouseDTO.setGrantorId(spouse.getGrantorId());
+            spouseDTO.setSpouseId(spouse.getSpouseId());
+            spouseDTO.setFullName(spouse.getFullName());
+            spouseDTO.setMaritalStatus(spouse.getMaritalStatus());
+            spouseDTO.setEmail(spouse.getEmail());
+        }
+        return spouseDTO;
     }
 
     @Override
@@ -185,12 +251,17 @@ public class EverLinkServiceImpl implements IEverLinkService{
         member.setSignedUp(true);
         everLinkRepository.save(member);
         //sent email
-        String subject = "Account Opening Confirmation. ";
-        String body = "Hi "+member.getFullName()+", \n\n"+
-                "Congratulations! You have successfully created an account with EverLink Holding LLC.\n"+
-                "Your username is: "+user.getUsername()+"\n\n"+
-                "Warm Regards,\n"+
-                "EverLink Holding LLC Support Team";
+        String subject = "Account Opening Confirmation.";
+        String body = """
+                        Hi %s,
+                    
+                        Congratulations! You have successfully created an account with EverLink Holding LLC.
+                        Your username is: %s.
+                        
+                        Warm Regards,
+                        EverLink Holding LLC Support Team.
+                        """.formatted(member.getFullName(), user.getUsername());
+
         emailService.sendEmailOnUpdateInfo(subject, body, userDTO.getMemberId());
         return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
     }
@@ -202,11 +273,16 @@ public class EverLinkServiceImpl implements IEverLinkService{
         //sent email
         Member member = everLinkRepository.findByMemberId(userDTO.getMemberId()).get();
         String subject = "Password change notification. ";
-        String body = "Hi "+member.getFullName()+", \n\n"+
-                "You have asked Everlink Holding LLC to change the password associated with your account \n\n"+
-                "If you did not change your password, please contact us at everlinkholdingllc@gmail.com.\n\n"+
-                "Warm Regards,\n"+
-                "EverLink Holding LLC Support Team";
+        String body = """
+                        Hi %s,
+                    
+                        You have asked Everlink Holding LLC to change the password associated with your account.
+                        If you did not change your password, please contact us at everlinkholdingllc@gmail.com.
+                        
+                        Warm Regards,
+                        EverLink Holding LLC Support Team.
+                        """.formatted(member.getFullName());
+
         emailService.sendEmailOnUpdateInfo(subject, body, userDTO.getMemberId());
         return everLinkMapper.mapToUserDTO(savedUser, userDTO.getMemberId());
     }

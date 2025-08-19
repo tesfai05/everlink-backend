@@ -38,31 +38,42 @@ public class SecurityConfig {
                                 "/html/signin.html",
                                 "/html/signup.html",
                                 "/html/footer.html",
+                                "html/unauthorized.html",
+                                "/html/forbidden.html",
                                 "/api/v1/members/public/**",
                                 "/html/changePassword.html",
                                 "/docs/everlink_member_policy_tig.pdf",
                                 "/docs/everlink_member_policy_en.pdf"
                         ).permitAll()
-                        .requestMatchers("/api/v1/members/user/**", "/html/memberDetails.html").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/v1/members/admin/**", "/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/members/user/**", "/html/memberDetails.html","/html/spouse.html","/html/beneficiary.html").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/api/v1/members/admin/**", "/html/register.html", "/html/list.html", "/html/email.html", "/html/admin.html").hasAnyRole("SUPER_ADMIN", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
+//                .exceptionHandling(e -> e
+//                        .authenticationEntryPoint((request, response, authException) -> {
+//                            response.setContentType("application/json");
+//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+//                        })
+//                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+//                            response.setContentType("application/json");
+//                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//                            response.getWriter().write("{\"error\": \"Access Denied\"}");
+//                        })
+//                )
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
+                            response.sendRedirect("/html/unauthorized.html"); // <-- your custom page
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType("application/json");
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.getWriter().write("{\"error\": \"Access Denied\"}");
+                            response.sendRedirect("/html/forbidden.html"); // <-- another custom page
                         })
                 )
+
                 .build();
     }
 

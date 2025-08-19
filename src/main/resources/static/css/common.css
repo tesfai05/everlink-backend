@@ -5,7 +5,7 @@ body {
     padding: 30px;
     margin: 0;
 }
-h1, h2{
+h3, h4{
     text-align: center;
     color: #5694d7;
     margin-bottom: 10px;
@@ -44,9 +44,53 @@ h1, h2{
 .close-btn:hover {
     color: #000;
 }
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+}
+/* Navbar styling */
+.navbar {
+    background-color: #516e8e;
+}
+
+.navbar .nav-link {
+    color: white !important;
+}
+
+.navbar .nav-link:hover,
+.navbar .dropdown-item:hover {
+    background-color: #069ff1;
+}
+
+/* Dropdown menu colors */
+.navbar .dropdown-menu {
+    background-color: #516e8e;
+}
+
+.navbar .dropdown-item {
+    color: white !important;
+}
 
 
+.navbar-nav {
+    overflow: visible !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+.navbar-nav .nav-item {
+    flex: 0 0 auto;
+}
 
 
+.navbar-collapse {
+    overflow: visible !important;
+}
 
+.dropdown-menu {
+    position: absolute;
+    z-index: 1050;
+}
 

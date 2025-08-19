@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Signup Form</title>
+    <title>View Beneficiaries</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/forms.css">
     <!-- Bootstrap CSS -->
@@ -58,47 +58,12 @@
                 </ul>
             </div>
         </nav> </br>
-        <h4>Signup With EverLink Holding</h4>
-        <small>To signup with us, first you need to be an active member of Everlink Holding LLC. Please contact us at <strong>everlinkholdingllc@gmail.com</strong> to be registered as a member.</small>
-        <br><br>
-        <form id="signupForm">
-            <div class="form-group">
-                <label for="memberId">Member ID:</label>
-                <input
-                        type="text"
-                        id="memberId"
-                        name="memberId"
-                        required
-                >
-                <small>Member ID is provided by Admin.</small>
-            </div>
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        required
-                >
-                <small>Must be at least 5 characters : alphabets and numbers only.</small>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        required
-                >
-                <small>Must be at least 5 characters : alphabets and numbers only.</small>
-            </div>
-            <div class="button-group">
-                <button type="submit">Signup</button>
-            </div>
-        </form>
+        <h4>List of Beneficiaries</h4>
+        <div id="beneficiariesList"></div>
         <div id="footer"></div>
     </div>
-    <!-- Error Modal -->
+
+    <!-- error modal -->
     <div id="errorModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeErrorModal()">&times;</span>
@@ -107,7 +72,7 @@
     </div>
     <script src="../js/common.js"></script>
     <script>
-        setupSignupForm();
+        renderBeneficiaries();
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 

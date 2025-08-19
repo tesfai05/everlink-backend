@@ -3,9 +3,11 @@ package com.tesfai.everlink.mapper;
 import com.tesfai.everlink.constant.EverLinkConstants;
 import com.tesfai.everlink.constant.MartialStatusEnum;
 import com.tesfai.everlink.constant.MembershipEnum;
+import com.tesfai.everlink.dto.BeneficiaryDTO;
 import com.tesfai.everlink.dto.MemberDTO;
 import com.tesfai.everlink.dto.RoleDTO;
 import com.tesfai.everlink.dto.UserDTO;
+import com.tesfai.everlink.entity.Beneficiary;
 import com.tesfai.everlink.entity.Member;
 import com.tesfai.everlink.entity.User;
 import com.tesfai.everlink.utils.EverLinkUtils;
@@ -102,6 +104,16 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
     @Override
     public boolean passwordMatches(UserDTO userDTO, User user) {
         return passwordEncoder.matches(userDTO.getPassword(),user.getPassword());
+    }
+
+    @Override
+    public BeneficiaryDTO mapToBeneficiaryDTO(Beneficiary beneficiary) {
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO();
+        beneficiaryDTO.setBeneficiaryId(beneficiary.getBeneficiaryId());
+        beneficiaryDTO.setFullName(beneficiary.getFullName());
+        beneficiaryDTO.setMaritalStatus(beneficiary.getMaritalStatus());
+        beneficiaryDTO.setEmail(beneficiary.getEmail());
+        return beneficiaryDTO;
     }
 
     private Member mapToMember(MemberDTO memberDTO){

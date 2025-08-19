@@ -14,6 +14,8 @@ public class Member {
     private String email;
     private String joinDate;
     private String leaveDate;
+    private String reJoinDate;
+    private String pauseDate;
     private String membershipStatus;
 
     private Double currentMonthlyContribution;
@@ -81,6 +83,22 @@ public class Member {
 
     public void setLeaveDate(String leaveDate) {
         this.leaveDate = leaveDate;
+    }
+
+    public String getReJoinDate() {
+        return reJoinDate;
+    }
+
+    public void setReJoinDate(String reJoinDate) {
+        this.reJoinDate = reJoinDate;
+    }
+
+    public String getPauseDate() {
+        return pauseDate;
+    }
+
+    public void setPauseDate(String pauseDate) {
+        this.pauseDate = pauseDate;
     }
 
     public String getMembershipStatus() {
