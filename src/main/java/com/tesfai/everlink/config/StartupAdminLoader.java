@@ -25,6 +25,14 @@ public class StartupAdminLoader {
     @Bean
     public CommandLineRunner loadDefaultAdmin(IUserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository, JdbcTemplate jdbcTemplate) {
         return args -> {
+            // Insert SUPER_ADMIN if it doesn't exist
+            jdbcTemplate.update("""
+                INSERT INTO wcnua0h21v69edfi.roles (name)
+                SELECT 'SUPER_ADMIN'
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM wcnua0h21v69edfi.roles WHERE name = 'SUPER_ADMIN'
+                )
+            """);
             // Insert ADMIN if it doesn't exist
             jdbcTemplate.update("""
                 INSERT INTO wcnua0h21v69edfi.roles (name)
@@ -43,7 +51,6 @@ public class StartupAdminLoader {
                 )
             """);
 
-            LOG.info("ADMIN & USER role name inserted.");
             boolean adminExists = userRepository
                     .findAll()
                     .stream()
@@ -51,20 +58,19 @@ public class StartupAdminLoader {
                     .map(user -> user.getRoles())
                     .filter(roles->roles!=null && roles.size()>0)
                     .flatMap(u->u.stream().map(us->us.getName()))
-                    .anyMatch(user -> "ADMIN".equalsIgnoreCase(user));
+                    .anyMatch(user -> "SUPER_ADMIN".equalsIgnoreCase(user));
 
             if (!adminExists) {
-                LOG.info("About to insert admin.");
                 User admin = new User();
                 admin.setUsername(adminUsername);
                 admin.setPassword(passwordEncoder.encode(adminPassword));
-                Role userRole = roleRepository.findByName("ADMIN")
-                        .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
+                Role userRole = roleRepository.findByName("SUPER_ADMIN")
+                        .orElseThrow(() -> new RuntimeException("SUPER_ADMIN role not found"));
                 admin.setRoles(Set.of(userRole));
-                admin.setMemberId("AD123");
+                admin.setMemberId("SA123");
                 admin.setEnabled(true);
                 userRepository.save(admin);
-                LOG.info(admin.getUsername() + " admin inserted.");
+                LOG.info(admin.getUsername() + " super admin inserted.");
             }
         };
     }
