@@ -79,12 +79,8 @@ if (logoutLink) {
 }
 
 if (refreshLink) {
-    refreshLink.classList.toggle("d-none", (role !== "ADMIN" || role === "SUPER_ADMIN"));
+    refreshLink.classList.toggle("d-none", !(role === "ADMIN" || role === "SUPER_ADMIN"));
 }
-//
-//if (member!==null && member.maritalStatus !== "Married") {
-//    document.getElementById("spouse-link").style.display = "none";
-//}
 
 function logout() {
     fetch("/api/v1/members/public/logout", {
@@ -101,7 +97,7 @@ function refreshRecord(){
         method: "GET",
         credentials: "include"
     }).then(() => {
-        window.location.href = "/html/list.html"; // Redirect to list of members
+        window.location.href = "/html/list.html";
     }).catch(err => console.error("Refresh record failed:", err));
 }
 
@@ -483,7 +479,7 @@ function renderBeneficiaries() {
         const div = document.createElement("div");
         div.className = "beneficiary-card";
         div.innerHTML = `
-              <h3>Beneficiary ${index + 1}</h3>
+              <h4>Beneficiary ${index + 1}</h4>
               <p><strong>Beneficiary ID:</strong> ${b.beneficiaryId}</p>
               <p><strong>Full Name:</strong> ${b.fullName}</p>
               <p><strong>Marital Status:</strong> ${b.maritalStatus}</p>

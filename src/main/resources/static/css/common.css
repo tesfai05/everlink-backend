@@ -5,12 +5,11 @@ body {
     padding: 30px;
     margin: 0;
 }
-h3, h4{
+.custom-container > h3, .custom-container > h4{
     text-align: center;
     color: #5694d7;
     margin-bottom: 10px;
 }
-
 .modal {
     display: none;
     position: fixed;
@@ -21,7 +20,6 @@ h3, h4{
     height: 100%;
     background-color: rgba(0,0,0,0.4);
 }
-
 .modal-content {
     background-color: #fff;
     margin: 15% auto;
@@ -32,7 +30,6 @@ h3, h4{
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     text-align: center;
 }
-
 .close-btn {
     float: right;
     font-size: 24px;
@@ -40,12 +37,11 @@ h3, h4{
     cursor: pointer;
     color: #aaa;
 }
-
 .close-btn:hover {
     color: #000;
 }
 @media screen and (max-width: 600px) {
-    .container {
+    .custom-container {
         padding: 20px;
     }
 }
@@ -53,44 +49,42 @@ h3, h4{
 .navbar {
     background-color: #516e8e;
 }
-
 .navbar .nav-link {
     color: white !important;
 }
-
 .navbar .nav-link:hover,
 .navbar .dropdown-item:hover {
     background-color: #069ff1;
 }
-
 /* Dropdown menu colors */
 .navbar .dropdown-menu {
     background-color: #516e8e;
 }
-
 .navbar .dropdown-item {
     color: white !important;
 }
-
-
 .navbar-nav {
     overflow: visible !important;
     flex-direction: row;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
 }
-
 .navbar-nav .nav-item {
     flex: 0 0 auto;
 }
-
-
 .navbar-collapse {
     overflow: visible !important;
 }
 
-.dropdown-menu {
-    position: absolute;
-    z-index: 1050;
+.beneficiariesContainer > .beneficiary-entry > .form-group > h4{
+    text-align: center;
+    color: #5694d7;
+    margin-bottom: 10px;
+}
+
+#beneficiariesList > .beneficiary-card > .form-group > h4{
+    text-align: center;
+    color: #5694d7;
+    margin-bottom: 10px;
 }
 
