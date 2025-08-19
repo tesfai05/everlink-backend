@@ -81,10 +81,10 @@ if (logoutLink) {
 if (refreshLink) {
     refreshLink.classList.toggle("d-none", (role !== "ADMIN" || role === "SUPER_ADMIN"));
 }
-
-if (member!==null && member.maritalStatus !== "Married") {
-    document.getElementById("spouse-link").style.display = "none";
-}
+//
+//if (member!==null && member.maritalStatus !== "Married") {
+//    document.getElementById("spouse-link").style.display = "none";
+//}
 
 function logout() {
     fetch("/api/v1/members/public/logout", {
