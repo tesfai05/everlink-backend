@@ -5,11 +5,6 @@ body {
     padding: 30px;
     margin: 0;
 }
-.custom-container > h3, .custom-container > h4{
-    text-align: center;
-    color: #5694d7;
-    margin-bottom: 10px;
-}
 .modal {
     display: none;
     position: fixed;

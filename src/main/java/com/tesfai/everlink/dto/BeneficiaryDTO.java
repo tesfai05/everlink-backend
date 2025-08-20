@@ -1,10 +1,19 @@
 package com.tesfai.everlink.dto;
 
 public class BeneficiaryDTO {
+    private String grantorId;
     private String beneficiaryId;
     private String fullName;
     private String maritalStatus;
     private String email;
+
+    public String getGrantorId() {
+        return grantorId;
+    }
+
+    public void setGrantorId(String grantorId) {
+        this.grantorId = grantorId;
+    }
 
     public String getEmail() {
         return email;

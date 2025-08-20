@@ -109,11 +109,20 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
     @Override
     public BeneficiaryDTO mapToBeneficiaryDTO(Beneficiary beneficiary) {
         BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO();
+        beneficiaryDTO.setGrantorId(beneficiary.getGrantorId());
         beneficiaryDTO.setBeneficiaryId(beneficiary.getBeneficiaryId());
         beneficiaryDTO.setFullName(beneficiary.getFullName());
         beneficiaryDTO.setMaritalStatus(beneficiary.getMaritalStatus());
         beneficiaryDTO.setEmail(beneficiary.getEmail());
         return beneficiaryDTO;
+    }
+
+    @Override
+    public Beneficiary mapToBeneficiaryEntity(Beneficiary beneficiary, BeneficiaryDTO beneficiaryDTO) {
+        beneficiary.setFullName(beneficiaryDTO.getFullName());
+        beneficiary.setMaritalStatus(beneficiaryDTO.getMaritalStatus());
+        beneficiary.setEmail(beneficiaryDTO.getEmail());
+        return beneficiary;
     }
 
     private Member mapToMember(MemberDTO memberDTO){

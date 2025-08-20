@@ -210,6 +210,32 @@ public class EverLinkServiceImpl implements IEverLinkService{
     }
 
     @Override
+    public BeneficiaryDTO retrieveBeneficiary(String beneficiaryId) {
+        Beneficiary beneficiary = beneficiaryRepository.findByBeneficiaryId(beneficiaryId);
+        BeneficiaryDTO beneficiaryDTO = new BeneficiaryDTO();
+        if(beneficiary!=null){
+            beneficiaryDTO = everLinkMapper.mapToBeneficiaryDTO(beneficiary);
+        }
+        return beneficiaryDTO;
+    }
+
+    @Override
+    public BeneficiaryDTO updateBeneficiary(BeneficiaryDTO beneficiaryDTO, String beneficiaryId) {
+        Beneficiary beneficiary = beneficiaryRepository.findByBeneficiaryId(beneficiaryId);
+        if(beneficiary!=null){
+            beneficiary = everLinkMapper.mapToBeneficiaryEntity(beneficiary, beneficiaryDTO);
+            beneficiary = beneficiaryRepository.save(beneficiary);
+        }
+        return everLinkMapper.mapToBeneficiaryDTO(beneficiary);
+    }
+
+    @Override
+    @Transactional
+    public void removeBeneficiary(String beneficiaryId) {
+        beneficiaryRepository.deleteByBeneficiaryId(beneficiaryId);
+    }
+
+    @Override
     @Transactional
     public String deleteMember(String memberId) {
         Optional<Member> member = everLinkRepository.findByMemberId(memberId);

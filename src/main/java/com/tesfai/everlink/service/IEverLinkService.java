@@ -33,4 +33,10 @@ public interface IEverLinkService {
     void addSpouse(SpouseDTO spouseDTO) throws SQLIntegrityConstraintViolationException, DataIntegrityViolationException;
 
     SpouseDTO retrieveSpouse(String grantorId);
+
+    BeneficiaryDTO retrieveBeneficiary(String beneficiaryId);
+
+    BeneficiaryDTO updateBeneficiary(BeneficiaryDTO beneficiaryDTO, String beneficiaryId);
+
+    void removeBeneficiary(String beneficiaryId);
 }

@@ -262,7 +262,7 @@
             </nav> </br>
             <h4>Members of EverLink Holding</h4>
             <div class="table-wrapper">
-                <table id="memberTable">
+                <table id="memberTable" class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Member Id</th>
@@ -402,28 +402,27 @@
                     const tbody = document.querySelector("#memberTable tbody");
                     data.forEach(member => {
                         const row = `<tr>
-                    <td>
-                        <a href="#" class="member-link" data-id="${member.memberId}">${member.memberId}<span class="arrow">&#9660;</span> </a>
-                        <div class="dropdown" id="dropdown-${member.memberId}" style="display: none; margin-top: 5px;">
-                          ${member.maritalStatus === 'Married' ? `<a href="#" onclick="loadSpouse('${member.memberId}')">Spouse</a><br/>` : ''}
-                          <a href="#" onclick="loadBeneficiaries('${member.memberId}')">Beneficiaries</a></br>
-                          <a href="#" onclick="editMember('${member.memberId}')">✏️ Edit</a></br>
-                          <a href="#" onclick="deleteMember('${member.memberId}')">🗑️ Delete</a>
-                        </div>
-                    </td>
-                    <td>${member.fullName}</td>
-                    <td>${member.maritalStatus}</td>
-                    <td>${member.email || "-"}</td>
-                    <td>${member.joinDate}</td>
-                    <td>${member.leaveDate || "-"}</td>
-                    <td>${member.membershipStatus}</td>
-                    <td>${member.totalContribution}</td>
-                    <td>${member.totalPreviousLegacyPool || "0.0"}</td>
-                    <td>${member.percentageOfOwnership}</td>
-                    <td>${member.statusChangeDate || "-"}</td>
-                    <td>${member.statusChanged ? "Yes" : "No"}</td>
-
-                </tr>`;
+                            <td>
+                                <a href="#" class="member-link" data-id="${member.memberId}">${member.memberId}<span class="arrow">&#9660;</span> </a>
+                                <div class="dropdown" id="dropdown-${member.memberId}" style="display: none; margin-top: 5px;">
+                                  ${member.maritalStatus === 'Married' ? `<a href="#" onclick="loadSpouse('${member.memberId}')">Spouse</a><br/>` : ''}
+                                  <a href="#" onclick="loadBeneficiaries('${member.memberId}')">Beneficiaries</a></br>
+                                  <a href="#" onclick="editMember('${member.memberId}')">✏️ Edit</a></br>
+                                  <a href="#" onclick="deleteMember('${member.memberId}')">🗑️ Delete</a>
+                                </div>
+                            </td>
+                            <td>${member.fullName}</td>
+                            <td>${member.maritalStatus}</td>
+                            <td>${member.email || "-"}</td>
+                            <td>${member.joinDate}</td>
+                            <td>${member.leaveDate || "-"}</td>
+                            <td>${member.membershipStatus}</td>
+                            <td>${member.totalContribution}</td>
+                            <td>${member.totalPreviousLegacyPool || "0.0"}</td>
+                            <td>${member.percentageOfOwnership}</td>
+                            <td>${member.statusChangeDate || "-"}</td>
+                            <td>${member.statusChanged ? "Yes" : "No"}</td>
+                        </tr>`;
                         tbody.innerHTML += row;
                     });
 

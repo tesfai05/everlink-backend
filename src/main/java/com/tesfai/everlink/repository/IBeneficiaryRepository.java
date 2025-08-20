@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface IBeneficiaryRepository extends JpaRepository<Beneficiary, Long> {
     List<Beneficiary> findByGrantorId(String grantorId);
+    Beneficiary findByBeneficiaryId(String beneficiaryId);
+    void deleteByBeneficiaryId(String beneficiaryId);
 }

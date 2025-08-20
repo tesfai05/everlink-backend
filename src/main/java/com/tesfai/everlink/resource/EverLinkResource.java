@@ -109,7 +109,7 @@ public class EverLinkResource {
 
             return ResponseEntity.ok(everLinkService.signupMember(userDTO));
         }catch (Exception e){
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body("An unexpected error during signup occurred.");
         }
     }
 
@@ -142,7 +142,7 @@ public class EverLinkResource {
             userDTO = everLinkService.changePassword(userDTO, user);
             return ResponseEntity.ok(userDTO);
         }catch (Exception e){
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body("An unexpected error during password change occurred.");
         }
     }
 
@@ -165,7 +165,7 @@ public class EverLinkResource {
 
             return ResponseEntity.ok(everLinkService.updateUser(userDTO));
         }catch (Exception e){
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().body("An unexpected error during update user occurred.");
         }
     }
 
@@ -198,7 +198,7 @@ public class EverLinkResource {
         }
     }
 
-    @PostMapping("/admin/update/{memberId}")
+    @PostMapping("/user/update/{memberId}")
     public ResponseEntity<?> updateMember(@PathVariable String memberId, @RequestBody MemberDTO memberDTO){
         try {
             LocalDate now = LocalDate.now();
@@ -300,6 +300,21 @@ public class EverLinkResource {
         return ResponseEntity.ok(beneficiaries);
     }
 
+    @GetMapping("/user/beneficiaries/{beneficiaryId}")
+    public ResponseEntity<?>  retrieveBeneficiary(@PathVariable String  beneficiaryId){
+        return ResponseEntity.ok(everLinkService.retrieveBeneficiary(beneficiaryId));
+    }
+
+    @PutMapping("/user/beneficiaries/{beneficiaryId}")
+    public ResponseEntity<?>  updateBeneficiary(@RequestBody BeneficiaryDTO  beneficiaryDTO, @PathVariable String beneficiaryId){
+        return ResponseEntity.ok(everLinkService.updateBeneficiary(beneficiaryDTO, beneficiaryId));
+    }
+    @DeleteMapping("/user/beneficiaries/{beneficiaryId}")
+    public ResponseEntity<?>  removeBeneficiary(@PathVariable String  beneficiaryId){
+        everLinkService.removeBeneficiary(beneficiaryId);
+        return ResponseEntity.ok("Beneficiary removed successfully");
+    }
+
     @PostMapping("/user/add-spouse")
     public ResponseEntity<?> addSpouse(@RequestBody SpouseDTO spouseDTO) {
         //Check memberId is valid
@@ -313,7 +328,11 @@ public class EverLinkResource {
         try {
             everLinkService.addSpouse(spouseDTO);
         } catch (SQLIntegrityConstraintViolationException | DataIntegrityViolationException e) {
-            return ResponseEntity.ok("You have already added your spouse.");
+            ErrorDTO errorDTO = new ErrorDTO(
+                    "500",
+                    "You have already added your spouse."
+            );
+           return ResponseEntity.internalServerError().body(errorDTO);
         }
         return ResponseEntity.ok("Spouse added successfully");
     }

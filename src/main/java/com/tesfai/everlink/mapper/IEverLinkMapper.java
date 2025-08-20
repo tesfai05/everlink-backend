@@ -23,4 +23,5 @@ public interface IEverLinkMapper {
     boolean passwordMatches(UserDTO userDTO, User user);
 
     BeneficiaryDTO mapToBeneficiaryDTO(Beneficiary beneficiary);
+    Beneficiary mapToBeneficiaryEntity(Beneficiary beneficiary, BeneficiaryDTO beneficiaryDTO);
 }

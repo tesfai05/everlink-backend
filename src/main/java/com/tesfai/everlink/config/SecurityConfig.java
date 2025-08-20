@@ -1,6 +1,5 @@
 package com.tesfai.everlink.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,24 +52,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-//                .exceptionHandling(e -> e
-//                        .authenticationEntryPoint((request, response, authException) -> {
-//                            response.setContentType("application/json");
-//                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                            response.getWriter().write("{\"error\": \"Unauthorized\"}");
-//                        })
-//                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-//                            response.setContentType("application/json");
-//                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//                            response.getWriter().write("{\"error\": \"Access Denied\"}");
-//                        })
-//                )
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendRedirect("/html/unauthorized.html"); // <-- your custom page
+                            response.sendRedirect("/html/forbidden.html");// You did not authenticate - need to log in
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.sendRedirect("/html/forbidden.html"); // <-- another custom page
+                            response.sendRedirect("/html/unauthorized.html"); //// You authenticated /log in - but no access
                         })
                 )
 

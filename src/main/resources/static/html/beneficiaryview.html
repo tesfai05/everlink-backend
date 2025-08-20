@@ -58,13 +58,26 @@
             </ul>
         </div>
     </nav> </br>
-    <h4>Add Beneficiaries Information</h4>
-    <form id="beneficiaryForm">
-        <div id="beneficiariesContainer"></div>
-        <button class="btn btn-outline-secondary" type="button" onclick="addBeneficiary()">+ Add Another Beneficiary</button>
-        <div class="button-group">
-            <button type="submit">Submit</button>
+    <h4>Edit Beneficiary Form</h4>
+    <form id="beneficiaryviewForm">
+        <div class="form-group">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName">
         </div>
+        <div class="form-group">
+            <label for="maritalStatus">Marital Status:</label>
+            <select id="maritalStatus" name="maritalStatus">
+                <option value="">-- Select --</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email">
+        </div>
+        <button type="submit">Update</button>
+        <div class="message" id="messageBox"></div>
     </form>
     <div id="footer"></div>
 </div>
@@ -75,9 +88,19 @@
         <p id="errorMessage"></p>
     </div>
 </div>
+<!-- Confirmation Modal -->
+<div id="confirmModal" style="display: none;">
+    <div class="modal-content">
+        <p id="confirmMessage">Are you sure?</p>
+        <div class="modal-buttons">
+            <button class="confirm-btn" id="confirmYes">Yes</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
 <script src="../js/common.js"></script>
 <script>
-    setupBeneficiaryForm();
+    renderBeneficiary();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 

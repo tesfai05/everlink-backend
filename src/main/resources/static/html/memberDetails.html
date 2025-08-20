@@ -176,7 +176,6 @@
         <div id="memberDetailsSection">
             <h5 class="member-detail">Hello, <span id="memberName"></span>, thank you for being a member of EverLink Holding.</h5>
             <h5>Your detail information is below:</h5>
-            <p>Member Id: <span id="memberId"></span></p>
             <p>Full Name: <span id="fullName"></span></p>
             <p>Email: <span id="email"></span></p>
             <p>Marital Status: <span id="maritalStatus"></span></p>
@@ -188,6 +187,10 @@
             <p>Current Monthly Contribution: <span id="currentMonthlyContribution"></span></p>
             <p>Percentage of Ownership: <span id="percentageOfOwnership"></span></p>
             <p>Status Change Date: <span id="statusChangeDate"></span></p>
+            <div class="d-flex justify-content-end">
+                <div id="btn-edit"></div><br>
+            </div>
+            <br>
         </div>
         <div id="superAdminDetails"></div>
 
@@ -198,7 +201,7 @@
                 <div class="dropup">
                     <a class="nav-link dropdown-toggle"
                         href="#"
-                        id="spouse"
+                        id="spouse-link"
                         role="button"
                         data-bs-toggle="dropdown"
                         aria-expanded="false" >Spouse</a>
@@ -212,7 +215,7 @@
                 <div class="dropup">
                     <a class="nav-link dropdown-toggle"
                        href="#"
-                       id="beneficiary"
+                       id="beneficiary-link"
                        role="button"
                        data-bs-toggle="dropdown"
                        aria-expanded="false" >Beneficiaries</a>
@@ -328,7 +331,6 @@
         if (memberData) {
             const member = JSON.parse(memberData);
             document.getElementById("memberName").textContent = member.fullName;
-            document.getElementById("memberId").textContent = member.memberId;
             document.getElementById("fullName").textContent = member.fullName;
             document.getElementById("maritalStatus").textContent = member.maritalStatus;
             document.getElementById("email").textContent = member.email;
@@ -362,6 +364,7 @@
                 document.getElementById("memberDetailsSection").style.display = "none";
                 document.getElementById("superAdminDetails").textContent = "This is a super admin role, no individual details to display here.";
             }
+            document.getElementById("btn-edit").innerHTML = `<a class="btn btn-outline-success" href="/html/profile.html">Edit</a>`;
         }
 
         function loadBeneficiaries() {

@@ -187,6 +187,7 @@ function setupChangePasswordForm() {
             .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
     });
 }
+
 //email.html
 function setupNotificationForm() {
     document.getElementById("notificationForm").addEventListener("submit", function(e) {
@@ -302,21 +303,25 @@ function setupSigninForm() {
         .then(member => {
             // Save full member info
             localStorage.setItem("member", JSON.stringify(member));
-            window.location.href = "/index.html";
+            if(member.maritalStatus==='Single'){
+                window.location.href = "/index.html";
+            }
+            return member;
         })
         .then(member => {
             fetch(`/api/v1/members/user/retrieve-spouse/${member.memberId}`, {
                 method: "GET",
                 credentials: "include"
             })
-                .then(response => {
+            .then(response => {
                 if (!response.ok) throw new Error("Failed to fetch spouse.");
                 return response.json();
             })
-                .then(data => {
+            .then(data => {
                 localStorage.setItem("spouse", JSON.stringify(data));
+                window.location.href = "/index.html";
             })
-                .catch(error => {
+            .catch(error => {
                 showErrorModal("Could not load spouse.");
             });
         })
@@ -378,14 +383,13 @@ function setupBeneficiaryForm(){
             grantorId: grantorId,
             beneficiaries: beneficiaries
         };
-
         fetch("/api/v1/members/user/add-beneficiaries", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify(payload)
         })
-            .then(res => {
+        .then(res => {
             if (res.ok) {
                 fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`, {
                     method: "GET",
@@ -416,13 +420,29 @@ function setupBeneficiaryForm(){
     addBeneficiary(beneficiaryIndex);
 }
 
+function retrieveBeneficiaries(grantorId){
+    fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`)
+    .then(response => {
+        if (!response.ok) throw new Error("Failed to fetch beneficiaries.");
+        return response.json();
+    })
+    .then(data => {
+        localStorage.setItem("beneficiaries", JSON.stringify(data));
+        window.location.href = "/html/beneficiarylist.html";
+    })
+    .catch(error => {
+        console.error(error);
+        showErrorModal("Could not load beneficiaries.");
+    });
+}
+
 function addBeneficiary() {
     const container = document.getElementById('beneficiariesContainer');
     const div = document.createElement('div');
     div.className = 'beneficiary-entry';
     div.innerHTML = `
       <div class="form-group">
-        <h4> Beneficiary ${beneficiaryIndex+1}</h4>
+        <h4 style="text-align:center; color:#5694d7; margin-bottom:10px;"> Beneficiary ${beneficiaryIndex+1}</h4>
         <label for="fullName_${beneficiaryIndex}">Full Name:</label>
         <input type="text" id="fullName_${beneficiaryIndex}" name="beneficiaries[${beneficiaryIndex}].fullName" required>
         <small>Enter first and last name.</small>
@@ -440,7 +460,7 @@ function addBeneficiary() {
         <input type="email" id="email_${beneficiaryIndex}" name="beneficiaries[${beneficiaryIndex}].email">
         <small>Must be a valid email.</small>
       </div>
-      ${beneficiaryIndex === 0 ? '':`<button type="button" class="remove-btn" onclick="removeBeneficiary(this)">Remove</button>`}
+      ${beneficiaryIndex === 0 ? '':`<button type="button" class="btn btn-outline-danger" onclick="removeBeneficiary(this)">Remove</button>`}
     `;
     container.appendChild(div);
     beneficiaryIndex++;
@@ -479,11 +499,13 @@ function renderBeneficiaries() {
         const div = document.createElement("div");
         div.className = "beneficiary-card";
         div.innerHTML = `
-              <h4>Beneficiary ${index + 1}</h4>
+              <h4 style="text-align:center; color:#5694d7; margin-bottom:10px;">Beneficiary ${index + 1}</h4>
               <p><strong>Beneficiary ID:</strong> ${b.beneficiaryId}</p>
               <p><strong>Full Name:</strong> ${b.fullName}</p>
               <p><strong>Marital Status:</strong> ${b.maritalStatus}</p>
               <p><strong>Email:</strong> ${b.email || "N/A"}</p>
+              <button id="edit-btn" class="btn btn-outline-success" onclick="editBeneficiary('${b.beneficiaryId}')">Edit</button>
+              <button id="remove-btn" class="btn btn-outline-danger" onclick="removeBeneficiary('${b.beneficiaryId}')">Remove</button>
             `;
         container.appendChild(div);
     });
@@ -527,7 +549,8 @@ function setupSpouseForm(){
                 });
             } else {
                 return res.text().then(errorMessage => {
-                    throw new Error(errorMessage || "Unknown error occurred");
+                    const e = JSON.parse(errorMessage);
+                    throw new Error(e.message || "Unknown error occurred");
                 });
             }
         })
@@ -564,6 +587,172 @@ function renderSpouse() {
             `;
 
 }
+
+function showConfirmation(message, onConfirm) {
+    document.getElementById("confirmMessage").textContent = message;
+    const confirmModal = document.getElementById("confirmModal");
+    confirmModal.style.display = "block";
+
+    const confirmYesBtn = document.getElementById("confirmYes");
+
+    // Remove previous event listeners
+    const newBtn = confirmYesBtn.cloneNode(true);
+    confirmYesBtn.parentNode.replaceChild(newBtn, confirmYesBtn);
+
+    newBtn.onclick = () => {
+        closeModal();
+        onConfirm();
+    };
+}
+
+function closeModal() {
+    document.getElementById("confirmModal").style.display = "none";
+}
+
+// Populate edit form with localStorage beneficiary data
+function editBeneficiary(id){
+    try {
+        fetch(`/api/v1/members/user/beneficiaries/${id}`, {
+            method: "GET",
+            credentials: "include",
+        })
+            .then(response => {
+            if (!response.ok) throw new Error("Failed to fetch beneficiary.");
+            return response.json();
+        })
+            .then(data => {
+            localStorage.setItem("beneficiary", JSON.stringify(data));
+            window.location.href = "/html/beneficiaryview.html";
+        })
+            .catch(error => {
+            console.error(error);
+            showErrorModal("Could not load beneficiary.");
+        });
+    } catch (err) {
+        showErrorModal("Edit error:"+err);
+    }
+}
+
+function removeBeneficiary(id){
+    const beneficiaries = JSON.parse(localStorage.getItem("beneficiaries"));
+    showConfirmation("Are you sure you want to delete this beneficiary?", () => {
+        fetch(`/api/v1/members/user/beneficiaries/${id}`, {
+            method: 'DELETE',
+            credentials: "include"
+        })
+        .then(res => {
+            if (res.ok) {
+                const updated = beneficiaries.filter(b => b.beneficiaryId !== id);
+                localStorage.setItem("beneficiaries", JSON.stringify(updated));
+                renderBeneficiaries();
+            } else {
+                return res.text().then(errorMessage => {
+                    throw new Error(errorMessage || "Unknown error occurred");
+                });
+            }
+        })
+         .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
+    });
+}
+
+
+function renderBeneficiary(){
+    const stored = localStorage.getItem("beneficiary");
+    if (stored) {
+        try {
+            const beneficiary = JSON.parse(stored);
+            if (beneficiary && beneficiary.beneficiaryId) {
+                document.getElementById("fullName").value = beneficiary.fullName || "";
+                document.getElementById("maritalStatus").value = beneficiary.maritalStatus || "";
+                document.getElementById("email").value = beneficiary.email || "";
+            }
+        } catch (e) {
+            console.error("Error parsing saved beneficiary:", e);
+        }
+    }
+
+    // Handle form submission for update
+    const form = document.getElementById("beneficiaryviewForm");
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const updated = {
+                fullName: document.getElementById("fullName").value,
+                maritalStatus: document.getElementById("maritalStatus").value,
+                email: document.getElementById("email").value
+            };
+
+            const stored = localStorage.getItem("beneficiary");
+            if (!stored) return;
+
+            const beneficiary = JSON.parse(stored);
+
+            try {
+                const res = await fetch(`/api/v1/members/user/beneficiaries/${beneficiary.beneficiaryId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updated)
+                });
+                if (res.ok) {
+                    localStorage.setItem("beneficiary", JSON.stringify({ ...beneficiary, ...updated }));
+                    retrieveBeneficiaries(beneficiary.grantorId);
+                } else {
+                    document.getElementById("messageBox").textContent = "Failed to update beneficiary.";
+                }
+            } catch (err) {
+                console.error("Update error:", err);
+            }
+        });
+    }
+}
+
+function setupEditProfileForm(){
+    const memberData = localStorage.getItem("member");
+    let member ;
+    if (memberData) {
+        member = JSON.parse(memberData);
+        document.getElementById("fullName").value = member.fullName;
+        document.getElementById("email").value = member.email;
+    }
+
+    document.getElementById("profileEditForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const memberId = member.memberId;
+        const updatedMember = {
+            memberId: memberId,
+            fullName: document.getElementById("fullName").value,
+            maritalStatus: member.maritalStatus,
+            email: document.getElementById("email").value,
+            joinDate: member.joinDate,
+            leaveDate: member.leaveDate,
+            statusChangeDate: member.statusChangeDate
+        };
+
+        fetch(`/api/v1/members/user/update/${memberId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(updatedMember)
+        })
+        .then(res => {
+            const messageBox = document.getElementById("messageBox");
+            if (res.ok) {
+                localStorage.setItem("member", JSON.stringify({ ...member, ...updatedMember }));
+                window.location.href = "/html/memberDetails.html";
+            } else {
+                messageBox.textContent = "Update failed. Please try again.";
+                messageBox.className = "message error";
+            }
+        })
+        .catch(() => {
+            const messageBox = document.getElementById("messageBox");
+            messageBox.textContent = "Error occurred during update.";
+            messageBox.className = "message error";
+        });
+    });
+}
+
 
 
 
