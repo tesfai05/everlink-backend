@@ -15,49 +15,7 @@
 </head>
 <body>
 <div class="custom-container">
-    <nav class="navbar navbar-expand-lg navbar-light ">
-        <!-- Toggler button for mobile view -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Navbar links -->
-        <div class="collapse navbar-collapse overflow-x-auto" id="navbarSupportedContent">
-            <ul class="navbar-nav flex-nowrap">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/index.html">Home <span class="visually-hidden">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/signup.html">Signup</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/signin.html">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/memberDetails.html">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/register.html">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/list.html">Members</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/email.html">Send Notification</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/html/admin.html">Update User Role</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-none" href="#" id="refresh-record" onclick="refreshRecord()">Refresh Record</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link d-none" href="#" id="logout-link" onclick="logout()">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav> </br>
+    <div id="nav-bar"></div>
     <h4>Add Beneficiaries Information</h4>
     <form id="beneficiaryForm">
         <div id="beneficiariesContainer"></div>
@@ -73,6 +31,16 @@
     <div class="modal-content">
         <span class="close-btn" onclick="closeErrorModal()">&times;</span>
         <p id="errorMessage"></p>
+    </div>
+</div>
+<!-- Confirmation Modal -->
+<div id="confirmModal" style="display: none;">
+    <div class="confirm-modal-content">
+        <p id="confirmMessage">Are you sure?</p>
+        <div class="modal-buttons">
+            <button class="confirm-btn" id="confirmYes">Yes</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
     </div>
 </div>
 <script src="../js/common.js"></script>

@@ -18,6 +18,51 @@ window.addEventListener(evt, resetTimer)
 
 resetTimer(); // start timer
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Inject footer
+    fetch("/html/footer.html")
+        .then(res => res.text())
+        .then(data => document.getElementById("footer").innerHTML = data);
+
+    // Inject nav-bar
+    loadNavbar();
+});
+function loadNavbar() {
+    fetch("/html/nav-bar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("nav-bar").innerHTML = data;
+            // Get role safely
+            const role = user?.roles?.[0]?.name?.toUpperCase() || null;
+            const restrictedList = getRestrictedLinks(role);
+            // Hide restricted links in the navbar
+            const navLinks = document.querySelectorAll(".navbar-nav a");
+            navLinks.forEach(link => {
+                const href = link.getAttribute("href");
+                if (!href) return;
+
+                const path = new URL(href, window.location.origin).pathname;
+
+                if (restrictedList.includes(path)) {
+                    const li = link.closest("li.nav-item");
+                    if (li) li.style.display = "none";
+                    else link.style.display = "none";
+                }
+            });
+            // Show/Hide Logout and Refresh Record links
+            const logoutLink = document.getElementById("logout-link");
+            const refreshLink = document.getElementById("refresh-record");
+
+            if (logoutLink) {
+                logoutLink.classList.toggle("d-none", !(role === "USER" || role === "ADMIN" || role === "SUPER_ADMIN"));
+            }
+
+            if (refreshLink) {
+                refreshLink.classList.toggle("d-none", !(role === "ADMIN" || role === "SUPER_ADMIN"));
+            }
+        })
+        .catch(err => console.error("Failed to load navbar:", err));
+}
 
 //COMMON
 const user = JSON.parse(localStorage.getItem("user"));
@@ -42,8 +87,6 @@ const restrictedForSuperAdmin = [
     "/html/spouse.html", "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
 ];
 
-// Get role safely
-const role = user?.roles?.[0]?.name?.toUpperCase() || null;
 
 // Choose restriction list
 function getRestrictedLinks(role) {
@@ -52,35 +95,7 @@ function getRestrictedLinks(role) {
     if (role === "USER") return restrictedForUser;
     return restrictedForNone;
 }
-const restrictedList = getRestrictedLinks(role);
 
-// Hide restricted links in the navbar
-const navLinks = document.querySelectorAll(".navbar-nav a");
-
-navLinks.forEach(link => {
-    const href = link.getAttribute("href");
-    if (!href) return;
-
-    const path = new URL(href, window.location.origin).pathname;
-
-    if (restrictedList.includes(path)) {
-        const li = link.closest("li.nav-item");
-        if (li) li.style.display = "none";
-        else link.style.display = "none";
-    }
-});
-
-// Show/Hide Logout and Refresh Record links
-const logoutLink = document.getElementById("logout-link");
-const refreshLink = document.getElementById("refresh-record");
-
-if (logoutLink) {
-    logoutLink.classList.toggle("d-none", !(role === "USER" || role === "ADMIN" || role === "SUPER_ADMIN"));
-}
-
-if (refreshLink) {
-    refreshLink.classList.toggle("d-none", !(role === "ADMIN" || role === "SUPER_ADMIN"));
-}
 
 function logout() {
     fetch("/api/v1/members/public/logout", {
@@ -100,11 +115,6 @@ function refreshRecord(){
         window.location.href = "/html/list.html";
     }).catch(err => console.error("Refresh record failed:", err));
 }
-
-// Inject footer
-fetch("/html/footer.html")
-    .then(res => res.text())
-    .then(data => document.getElementById("footer").innerHTML = data);
 
 //Error Modal
 function showErrorModal(message) {
@@ -505,7 +515,7 @@ function renderBeneficiaries() {
               <p><strong>Marital Status:</strong> ${b.maritalStatus}</p>
               <p><strong>Email:</strong> ${b.email || "N/A"}</p>
               <button id="edit-btn" class="btn btn-outline-success" onclick="editBeneficiary('${b.beneficiaryId}')">Edit</button>
-              <button id="remove-btn" class="btn btn-outline-danger" onclick="removeBeneficiary('${b.beneficiaryId}')">Remove</button>
+              <button id="remove-btn" class="btn btn-outline-danger" onclick="deleteBeneficiary('${b.beneficiaryId}')">Remove</button>
             `;
         container.appendChild(div);
     });
@@ -633,7 +643,7 @@ function editBeneficiary(id){
     }
 }
 
-function removeBeneficiary(id){
+function deleteBeneficiary(id){
     const beneficiaries = JSON.parse(localStorage.getItem("beneficiaries"));
     showConfirmation("Are you sure you want to delete this beneficiary?", () => {
         fetch(`/api/v1/members/user/beneficiaries/${id}`, {
