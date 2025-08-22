@@ -589,13 +589,89 @@ function renderSpouse() {
         container.innerHTML = "<p>No spouse found.</p>";
         return;
     }
-
+    const role = user?.roles?.[0]?.name?.toUpperCase() || null;
     document.getElementById("spouse").innerHTML = `<p><strong>Spouse ID:</strong> ${spouse.spouseId}</p>
               <p><strong>Full Name:</strong> ${spouse.fullName}</p>
               <p><strong>Marital Status:</strong> ${spouse.maritalStatus}</p>
               <p><strong>Email:</strong> ${spouse.email || "N/A"}</p>
+              <button id="edit-btn" class="btn btn-outline-success" onclick="window.location.href = '/html/spouseedit.html'">Edit</button>
+               ${role==='USER' ? '':`<button type="button" class="btn btn-outline-danger" onclick="deleteSpouse()">Delete</button>`}
             `;
 
+}
+
+function editSpouseDetails(){
+    const stored = localStorage.getItem("spouse");
+    let spouse;
+    if (stored) {
+        try {
+            spouse = JSON.parse(stored);
+            if (spouse && spouse.spouseId) {
+                document.getElementById("fullName").value = spouse.fullName || "";
+                document.getElementById("maritalStatus").value = spouse.maritalStatus || "";
+                document.getElementById("email").value = spouse.email || "";
+            }
+        } catch (e) {
+            console.error("Error parsing saved spouse:", e);
+        }
+    }
+
+    // Handle form submission for update
+    const form = document.getElementById("editSpouseForm");
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const updated = {
+                fullName: document.getElementById("fullName").value,
+                maritalStatus: document.getElementById("maritalStatus").value,
+                email: document.getElementById("email").value
+            };
+            try {
+                const res = await fetch(`/api/v1/members/user/spouse/${spouse.spouseId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updated)
+                });
+                if (res.ok) {
+                    localStorage.setItem("spouse", JSON.stringify({ ...spouse, ...updated }));
+                    window.location.href = "/html/spouseview.html";
+                } else {
+                    document.getElementById("messageBox").textContent = "Failed to update spouse.";
+                }
+            } catch (err) {
+                console.error("Update error:", err);
+            }
+        });
+    }
+}
+
+function deleteSpouse(){
+    const stored = localStorage.getItem("spouse");
+    let spouse;
+    if (stored) {
+        try {
+            spouse = JSON.parse(stored);
+        }catch (e) {
+            console.error("Error parsing saved spouse:", e);
+        }
+    }
+    showConfirmation("Are you sure you want to delete this spouse?", () => {
+        fetch(`/api/v1/members/user/spouse/${spouse.spouseId}`, {
+            method: 'DELETE',
+            credentials: "include"
+        })
+        .then(res => {
+            if (res.ok) {
+                localStorage.removeItem("spouse");
+                window.location.href = "/html/spouseview.html";
+            } else {
+                return res.text().then(errorMessage => {
+                    throw new Error(errorMessage || "Unknown error occurred");
+                });
+            }
+        })
+       .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
+    });
 }
 
 function showConfirmation(message, onConfirm) {
@@ -626,15 +702,15 @@ function editBeneficiary(id){
             method: "GET",
             credentials: "include",
         })
-            .then(response => {
+        .then(response => {
             if (!response.ok) throw new Error("Failed to fetch beneficiary.");
             return response.json();
         })
-            .then(data => {
+        .then(data => {
             localStorage.setItem("beneficiary", JSON.stringify(data));
             window.location.href = "/html/beneficiaryview.html";
         })
-            .catch(error => {
+        .catch(error => {
             console.error(error);
             showErrorModal("Could not load beneficiary.");
         });
@@ -764,8 +840,8 @@ function setupEditProfileForm(){
 }
 
 function setupIndexPage(){
-    const user = localStorage.getItem("user");
-    if(!user){
+    const user1 = localStorage.getItem("user");
+    if(!user1){
         document.getElementById("signup-btn").innerHTML = `<button onclick="window.location.href='/html/signup.html'">Signup</button>`;
     }
 }

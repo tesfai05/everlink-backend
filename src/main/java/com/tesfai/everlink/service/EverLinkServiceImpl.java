@@ -196,6 +196,22 @@ public class EverLinkServiceImpl implements IEverLinkService{
     }
 
     @Override
+    public SpouseDTO updateSpouse(SpouseDTO spouseDTO, String spouseId) {
+        Spouse spouse = spouseRepository.findBySpouseId(spouseId);
+        if(spouse!=null){
+            spouse = everLinkMapper.mapToSpouseEntity(spouse, spouseDTO);
+            spouse = spouseRepository.save(spouse);
+        }
+        return everLinkMapper.mapToSpouseDTO(spouse);
+    }
+
+    @Override
+    @Transactional
+    public void deleteSpouse(String spouseId) {
+        spouseRepository.deleteBySpouseId(spouseId);
+    }
+
+    @Override
     public SpouseDTO retrieveSpouse(String grantorId) {
         Spouse spouse = spouseRepository.findByGrantorId(grantorId);
         SpouseDTO spouseDTO = new SpouseDTO();

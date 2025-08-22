@@ -2,9 +2,11 @@ package com.tesfai.everlink.mapper;
 
 import com.tesfai.everlink.dto.BeneficiaryDTO;
 import com.tesfai.everlink.dto.MemberDTO;
+import com.tesfai.everlink.dto.SpouseDTO;
 import com.tesfai.everlink.dto.UserDTO;
 import com.tesfai.everlink.entity.Beneficiary;
 import com.tesfai.everlink.entity.Member;
+import com.tesfai.everlink.entity.Spouse;
 import com.tesfai.everlink.entity.User;
 
 import java.util.List;
@@ -24,4 +26,8 @@ public interface IEverLinkMapper {
 
     BeneficiaryDTO mapToBeneficiaryDTO(Beneficiary beneficiary);
     Beneficiary mapToBeneficiaryEntity(Beneficiary beneficiary, BeneficiaryDTO beneficiaryDTO);
+
+    Spouse mapToSpouseEntity(Spouse spouse, SpouseDTO spouseDTO);
+
+    SpouseDTO mapToSpouseDTO(Spouse spouse);
 }

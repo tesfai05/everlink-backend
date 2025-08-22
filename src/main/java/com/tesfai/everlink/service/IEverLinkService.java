@@ -39,4 +39,8 @@ public interface IEverLinkService {
     BeneficiaryDTO updateBeneficiary(BeneficiaryDTO beneficiaryDTO, String beneficiaryId);
 
     void removeBeneficiary(String beneficiaryId);
+
+    SpouseDTO updateSpouse(SpouseDTO spouseDTO, String spouseId);
+
+    void deleteSpouse(String spouseId);
 }

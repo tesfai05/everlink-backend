@@ -28,6 +28,16 @@
         <p id="errorMessage"></p>
     </div>
 </div>
+<!-- Confirmation Modal -->
+<div id="confirmModal" style="display: none;">
+    <div class="confirm-modal-content">
+        <p id="confirmMessage">Are you sure?</p>
+        <div class="modal-buttons">
+            <button class="confirm-btn" id="confirmYes">Yes</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
 <script src="../js/common.js"></script>
 <script>
     renderSpouse();

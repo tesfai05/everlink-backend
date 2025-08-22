@@ -3,12 +3,10 @@ package com.tesfai.everlink.mapper;
 import com.tesfai.everlink.constant.EverLinkConstants;
 import com.tesfai.everlink.constant.MartialStatusEnum;
 import com.tesfai.everlink.constant.MembershipEnum;
-import com.tesfai.everlink.dto.BeneficiaryDTO;
-import com.tesfai.everlink.dto.MemberDTO;
-import com.tesfai.everlink.dto.RoleDTO;
-import com.tesfai.everlink.dto.UserDTO;
+import com.tesfai.everlink.dto.*;
 import com.tesfai.everlink.entity.Beneficiary;
 import com.tesfai.everlink.entity.Member;
+import com.tesfai.everlink.entity.Spouse;
 import com.tesfai.everlink.entity.User;
 import com.tesfai.everlink.utils.EverLinkUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -123,6 +121,25 @@ public class EverLinkMapperImpl implements IEverLinkMapper{
         beneficiary.setMaritalStatus(beneficiaryDTO.getMaritalStatus());
         beneficiary.setEmail(beneficiaryDTO.getEmail());
         return beneficiary;
+    }
+
+    @Override
+    public Spouse mapToSpouseEntity(Spouse spouse, SpouseDTO spouseDTO) {
+        spouse.setFullName(spouseDTO.getFullName());
+        spouse.setMaritalStatus(spouseDTO.getMaritalStatus());
+        spouse.setEmail(spouseDTO.getEmail());
+        return spouse;
+    }
+
+    @Override
+    public SpouseDTO mapToSpouseDTO(Spouse spouse) {
+        SpouseDTO spouseDTO = new SpouseDTO();
+        spouseDTO.setGrantorId(spouse.getGrantorId());
+        spouseDTO.setSpouseId(spouse.getSpouseId());
+        spouseDTO.setFullName(spouse.getFullName());
+        spouseDTO.setMaritalStatus(spouse.getMaritalStatus());
+        spouseDTO.setEmail(spouse.getEmail());
+        return spouseDTO;
     }
 
     private Member mapToMember(MemberDTO memberDTO){

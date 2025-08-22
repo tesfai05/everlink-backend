@@ -189,7 +189,11 @@ public class EverLinkResource {
             String fullName = memberDTO.getFullName().replaceAll("\\s+", " ");
             String[] name = fullName.split("\s");
             if(name!=null && name.length<2){
-                return ResponseEntity.badRequest().body("First name and Last name are required.");
+                ErrorDTO errorDTO = new ErrorDTO(
+                        "400",
+                        "First name and Last name are required."
+                );
+                return ResponseEntity.badRequest().body(errorDTO);
             }
             memberDTO.setFullName(fullName);
             return ResponseEntity.ok(everLinkService.registerMember(memberDTO));
@@ -201,6 +205,11 @@ public class EverLinkResource {
     @PostMapping("/user/update/{memberId}")
     public ResponseEntity<?> updateMember(@PathVariable String memberId, @RequestBody MemberDTO memberDTO){
         try {
+            String fullName = memberDTO.getFullName().replaceAll("\\s+", " ");
+            String[] name = fullName.split("\s");
+            if(name!=null && name.length<2){
+                return ResponseEntity.badRequest().body("First name and Last name are required.");
+            }
             LocalDate now = LocalDate.now();
             LocalDate joinDate = EverLinkUtils.fromString(memberDTO.getJoinDate());
             LocalDate leaveDate = EverLinkUtils.fromString(memberDTO.getLeaveDate());
@@ -275,6 +284,18 @@ public class EverLinkResource {
 
     @PostMapping("/user/add-beneficiaries")
     public ResponseEntity<?> addBeneficiaries(@RequestBody BeneficiaryFormDTO beneficiaryFormDTO) {
+        for(BeneficiaryDTO beneficiaryDTO : beneficiaryFormDTO.getBeneficiaries()){
+            String fullName = beneficiaryDTO.getFullName().replaceAll("\\s+", " ");
+            String[] name = fullName.split("\s");
+            if(name!=null && name.length<2){
+                ErrorDTO errorDTO = new ErrorDTO(
+                        "400",
+                        "First name and Last name are required."
+                );
+                return ResponseEntity.badRequest().body(errorDTO);
+            }
+        }
+
         //Check memberId is valid
         String memberId = beneficiaryFormDTO.getGrantorId();
         List<String> memberIdList = everLinkService.getMembers().stream()
@@ -325,6 +346,15 @@ public class EverLinkResource {
         if(!memberIdList.contains(memberId)){
             return ResponseEntity.badRequest().body("Invalid grantor ID.");
         }
+        String fullName = spouseDTO.getFullName().replaceAll("\\s+", " ");
+        String[] name = fullName.split("\s");
+        if(name!=null && name.length<2){
+            ErrorDTO errorDTO = new ErrorDTO(
+                    "400",
+                    "First name and Last name are required."
+            );
+            return ResponseEntity.badRequest().body(errorDTO);
+        }
         try {
             everLinkService.addSpouse(spouseDTO);
         } catch (SQLIntegrityConstraintViolationException | DataIntegrityViolationException e) {
@@ -348,5 +378,14 @@ public class EverLinkResource {
         }
         SpouseDTO spouseDTO = everLinkService.retrieveSpouse(grantorId);
         return ResponseEntity.ok(spouseDTO);
+    }
+    @PutMapping("/user/spouse/{spouseId}")
+    public ResponseEntity<?>  updateSpouse(@RequestBody SpouseDTO  spouseDTO, @PathVariable String spouseId){
+        return ResponseEntity.ok(everLinkService.updateSpouse(spouseDTO, spouseId));
+    }
+    @DeleteMapping("/user/spouse/{spouseId}")
+    public ResponseEntity<?>  deleteSpouse(@PathVariable String  spouseId){
+        everLinkService.deleteSpouse(spouseId);
+        return ResponseEntity.ok("Spouse deleted successfully");
     }
 }
