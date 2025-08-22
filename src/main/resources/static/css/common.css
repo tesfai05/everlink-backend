@@ -71,6 +71,18 @@ body {
     overflow: visible !important;
 }
 
+.dropup > .dropdown-menu {
+    background-color: #516e8e
+}
+.dropdown-item {
+    color: white !important;
+}
+
+.dropup > a:hover,
+.dropup > .dropdown-menu > li > a:hover {
+    background-color: #069ff1;
+}
+
 .beneficiariesContainer > .beneficiary-entry > .form-group > h4{
     text-align: center;
     color: #5694d7;

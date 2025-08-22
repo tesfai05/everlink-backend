@@ -3,102 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Member Details</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 30px;
-            margin: 0;
-        }
-
-        .custom-container {
-            max-width: 500px;
-            margin: auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .custom-container > h4 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #5694d7;
-        }
-
-        .member-detail{
-            margin-bottom: 25px;
-            color: #5694d7;
-        }
-
-        @media screen and (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 10px;
-            }
-        }
-
-        .custom-container > h3 {
-            text-align: center;
-            color: #5694d7;
-        }
-        span {
-            color: #49a0a0;
-        }
-        @media screen and (max-width: 600px) {
-            .custom-container {
-                padding: 20px;
-            }
-        }
-        /* Navbar styling */
-        .navbar {
-            background-color: #516e8e;
-        }
-
-        .navbar .nav-link {
-            color: white !important;
-        }
-
-        .navbar .nav-link:hover,
-        .navbar .dropdown-item:hover {
-            background-color: #069ff1;
-        }
-
-        /* Dropdown menu colors */
-        .navbar .dropdown-menu {
-            background-color: #516e8e;
-        }
-        .navbar .dropdown-item {
-            color: white !important;
-        }
-        .navbar-nav {
-            overflow: visible !important;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .navbar-nav .nav-item {
-            flex: 0 0 auto;
-        }
-        .navbar-collapse {
-            overflow: visible !important;
-        }
-        .dropup > .dropdown-menu {
-            background-color: #516e8e
-        }
-        .dropdown-item {
-            color: white !important;
-        }
-
-        .dropup > a:hover,
-        .dropup > .dropdown-menu > li > a:hover {
-            background-color: #069ff1;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/forms.css">
     <!-- Bootstrap CSS -->
     <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
@@ -198,7 +104,7 @@
             <div class="container d-flex gap-4">
 
                 <!-- Spouse Dropdown -->
-                <div class="dropup">
+                <div class="dropup" id="spouse-div">
                     <a class="nav-link dropdown-toggle"
                         href="#"
                         id="spouse-link"
@@ -207,7 +113,7 @@
                         aria-expanded="false" >Spouse</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/html/spouse.html">Add</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadSpouse()">View</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadSpouse(null)">View</a></li>
                     </ul>
                 </div>
 
@@ -221,7 +127,7 @@
                        aria-expanded="false" >Beneficiaries</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/html/beneficiary.html">Add</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="loadBeneficiaries()">View</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="loadBeneficiaries(null)">View</a></li>
                     </ul>
                 </div>
             </div>
@@ -229,202 +135,8 @@
 
         <div id="footer"></div>
     </div>
-    <script>
-        //Timeout
-        let logoutTimer;
-        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 min
-
-        function resetTimer() {
-            clearTimeout(logoutTimer);
-            logoutTimer = setTimeout(() => {
-                localStorage.removeItem("user");
-                showErrorModal("You have been logged out due to inactivity.");
-                window.location.href = "/html/signin.html";
-            }, INACTIVITY_LIMIT);
-        }
-
-        //COMMON
-        const user = JSON.parse(localStorage.getItem("user"));
-        const member = JSON.parse(localStorage.getItem("member"));
-
-        // Define role-based restrictions
-        const restrictedForNone = [
-            "/html/register.html", "/html/list.html", "/html/email.html",
-            "/html/admin.html", "/html/memberDetails.html", "/html/spouse.html",
-            "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
-        ];
-        const restrictedForUser = [
-            "/html/register.html", "/html/list.html", "/html/email.html",
-            "/html/admin.html", "/html/signup.html", "/html/signin.html"
-        ];
-        const restrictedForAdmin = [
-            "/html/signup.html", "/html/signin.html"
-        ];
-
-        const restrictedForSuperAdmin = [
-            "/html/signup.html", "/html/signin.html", "/html/memberDetails.html",
-            "/html/spouse.html", "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
-        ];
-
-        // Get role safely
-        const role = user?.roles?.[0]?.name?.toUpperCase() || null;
-
-        // Choose restriction list
-        function getRestrictedLinks(role) {
-            if (role === "SUPER_ADMIN") return restrictedForSuperAdmin;
-            if (role === "ADMIN") return restrictedForAdmin;
-            if (role === "USER") return restrictedForUser;
-            return restrictedForNone;
-        }
-        const restrictedList = getRestrictedLinks(role);
-
-        // Hide restricted links in the navbar
-        const navLinks = document.querySelectorAll(".navbar-nav a");
-
-        navLinks.forEach(link => {
-            const href = link.getAttribute("href");
-            if (!href) return;
-
-            const path = new URL(href, window.location.origin).pathname;
-
-            if (restrictedList.includes(path)) {
-                const li = link.closest("li.nav-item");
-                if (li) li.style.display = "none";
-                else link.style.display = "none";
-            }
-        });
-
-        // Show/Hide Logout and Refresh Record links
-        const logoutLink = document.getElementById("logout-link");
-        const refreshLink = document.getElementById("refresh-record");
-
-        if (logoutLink) {
-            logoutLink.classList.toggle("d-none", !(role === "USER" || role === "ADMIN" || role === "SUPER_ADMIN"));
-        }
-
-        if (refreshLink) {
-            refreshLink.classList.toggle("d-none", (role !== "ADMIN" || role === "SUPER_ADMIN"));
-        }
-
-        if (member!==null && member.maritalStatus !== "Married") {
-            document.getElementById("spouse-link").style.display = "none";
-        }
-
-        function logout() {
-            fetch("/api/v1/members/public/logout", {
-                method: "POST",
-                credentials: "include"
-            }).then(() => {
-                localStorage.removeItem("user"); // Clear user info from localStorage
-                window.location.href = "/index.html"; // Redirect to home
-            }).catch(err => console.error("Logout failed:", err));
-        }
-
-        const memberData = localStorage.getItem("member");
-
-        function toInputDateFormat(mmddyyyy) {
-            if (!mmddyyyy || !mmddyyyy.includes("/")) return "";
-            const [mm, dd, yyyy] = mmddyyyy.split("/");
-            return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
-        }
-
-        if (memberData) {
-            const member = JSON.parse(memberData);
-            document.getElementById("memberName").textContent = member.fullName;
-            document.getElementById("fullName").textContent = member.fullName;
-            document.getElementById("maritalStatus").textContent = member.maritalStatus;
-            document.getElementById("email").textContent = member.email;
-            document.getElementById("joinDate").textContent = toInputDateFormat(member.joinDate);
-            document.getElementById("membershipStatus").textContent = member.membershipStatus;
-            document.getElementById("statusChangeDate").textContent = toInputDateFormat(member.statusChangeDate) || "N/A";
-            document.getElementById("currentMonthlyContribution").textContent = "$"+member.currentMonthlyContribution;
-            let pmc = member.previousMonthlyContribution;
-            if(pmc){
-                pmc = "$"+member.previousMonthlyContribution;
-            }
-            document.getElementById("previousMonthlyContribution").textContent = pmc || "N/A";
-            let tplp = member.totalPreviousLegacyPool;
-            if(tplp){
-                tplp = "$"+member.totalPreviousLegacyPool;
-            }
-            document.getElementById("totalPreviousLegacyPool").textContent = tplp || "0.0";
-            let tc = member.totalContribution;
-            if(tc){
-                tc = "$"+member.totalContribution;
-            }
-            document.getElementById("totalContribution").textContent = tc || "0.0";
-            let per = member.percentageOfOwnership;
-            if(per){
-                per = member.percentageOfOwnership+"%";
-            }
-            document.getElementById("percentageOfOwnership").textContent = per || "0.0";
-
-            const memberName = document.getElementById("memberName").textContent.trim();
-            if (!memberName) {
-                document.getElementById("memberDetailsSection").style.display = "none";
-                document.getElementById("superAdminDetails").textContent = "This is a super admin role, no individual details to display here.";
-            }
-            document.getElementById("btn-edit").innerHTML = `<a class="btn btn-outline-success" href="/html/profile.html">Edit</a>`;
-        }
-
-        function loadBeneficiaries() {
-            const grantorId = member.memberId;
-            if (!grantorId) {
-                showErrorModal("Please enter a grantor ID.");
-                return;
-            }
-
-            fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`)
-                .then(response => {
-                if (!response.ok) throw new Error("Failed to fetch beneficiaries.");
-                return response.json();
-            })
-                .then(data => {
-                localStorage.setItem("beneficiaries", JSON.stringify(data));
-                window.location.href = "/html/beneficiarylist.html";
-            })
-                .catch(error => {
-                console.error(error);
-                showErrorModal("Could not load beneficiaries.");
-            });
-        }
-
-        function loadSpouse() {
-            const grantorId = member.memberId;
-            if (!grantorId) {
-                showErrorModal("Please enter a grantor ID.");
-                return;
-            }
-
-            fetch(`/api/v1/members/user/retrieve-spouse/${grantorId}`)
-                .then(response => {
-                if (!response.ok) throw new Error("Failed to fetch spouse.");
-                return response.json();
-            })
-                .then(data => {
-                localStorage.setItem("spouse", JSON.stringify(data));
-                window.location.href = "/html/spouseview.html";
-            })
-                .catch(error => {
-                console.error(error);
-                showErrorModal("Could not load spouse.");
-            });
-        }
-
-        function refreshRecord(){
-            fetch("/api/v1/members/admin/refresh-record", {
-                method: "GET",
-                credentials: "include"
-            }).then(() => {
-                window.location.href = "/html/list.html";
-            }).catch(err => console.error("Refresh record failed:", err));
-        }
-        // Inject footer
-        fetch("/html/footer.html")
-            .then(res => res.text())
-            .then(data => document.getElementById("footer").innerHTML = data);
-
-    </script>
+    <script src="../js/common.js"></script>
+    <script>setupProfilePreFill();</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -753,8 +753,279 @@ function setupEditProfileForm(){
     });
 }
 
+function setupIndexPage(){
+    const user = localStorage.getItem("user");
+    if(!user){
+        document.getElementById("signup-btn").innerHTML = `<button onclick="window.location.href='/html/signup.html'">Signup</button>`;
+    }
+}
 
+function setupMemberUpdateForm(){
+    const memberData = localStorage.getItem("editMember");
+    let memberId = null;
 
+    function toInputDateFormat(mmddyyyy) {
+        if (!mmddyyyy || !mmddyyyy.includes("/")) return "";
+        const [mm, dd, yyyy] = mmddyyyy.split("/");
+        return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+    }
 
+    if (memberData) {
+        const member = JSON.parse(memberData);
+        memberId = member.memberId;
 
+        document.getElementById("fullName").value = member.fullName || "";
+        document.getElementById("maritalStatus").value = member.maritalStatus || "";
+        document.getElementById("email").value = member.email || "";
 
+        document.getElementById("joinDate").value = toInputDateFormat(member.joinDate);
+        document.getElementById("leaveDate").value = toInputDateFormat(member.leaveDate);
+        document.getElementById("statusChangeDate").value = toInputDateFormat(member.statusChangeDate);
+    }
+
+    document.getElementById("memberForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const rawJoinDate = document.getElementById("joinDate").value;
+        const rawLeaveDate = document.getElementById("leaveDate").value;
+        const rawScDate = document.getElementById("statusChangeDate").value;
+
+        const formatDate = (dateStr) => {
+            if (!dateStr) return null;
+            const [year, month, day] = dateStr.split("-");
+            return `${month}/${day}/${year}`;
+        };
+
+        const updatedMember = {
+            memberId: memberId,
+            fullName: document.getElementById("fullName").value,
+            maritalStatus: document.getElementById("maritalStatus").value,
+            email: document.getElementById("email").value,
+            joinDate: formatDate(rawJoinDate),
+            leaveDate: formatDate(rawLeaveDate),
+            statusChangeDate: formatDate(rawScDate)
+        };
+
+        fetch(`/api/v1/members/user/update/${memberId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(updatedMember)
+        })
+            .then(res => {
+            const messageBox = document.getElementById("messageBox");
+            if (res.ok) {
+                window.location.href = "/html/list.html";
+                localStorage.removeItem("editMember");
+            } else {
+                messageBox.textContent = "Update failed. Please try again.";
+                messageBox.className = "message error";
+            }
+        })
+            .catch(() => {
+            const messageBox = document.getElementById("messageBox");
+            messageBox.textContent = "Error occurred during update.";
+            messageBox.className = "message error";
+        });
+    });
+}
+
+function setupProfilePreFill(){
+    const memberData = localStorage.getItem("member");
+
+    function toInputDateFormat(mmddyyyy) {
+        if (!mmddyyyy || !mmddyyyy.includes("/")) return "";
+        const [mm, dd, yyyy] = mmddyyyy.split("/");
+        return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+    }
+
+    if (memberData) {
+        const member = JSON.parse(memberData);
+        document.getElementById("memberName").textContent = member.fullName;
+        document.getElementById("fullName").textContent = member.fullName;
+        document.getElementById("maritalStatus").textContent = member.maritalStatus;
+        document.getElementById("email").textContent = member.email;
+        document.getElementById("joinDate").textContent = toInputDateFormat(member.joinDate);
+        document.getElementById("membershipStatus").textContent = member.membershipStatus;
+        document.getElementById("statusChangeDate").textContent = toInputDateFormat(member.statusChangeDate) || "N/A";
+        document.getElementById("currentMonthlyContribution").textContent = "$"+member.currentMonthlyContribution;
+        let pmc = member.previousMonthlyContribution;
+        if(pmc){
+            pmc = "$"+member.previousMonthlyContribution;
+        }
+        document.getElementById("previousMonthlyContribution").textContent = pmc || "N/A";
+        let tplp = member.totalPreviousLegacyPool;
+        if(tplp){
+            tplp = "$"+member.totalPreviousLegacyPool;
+        }
+        document.getElementById("totalPreviousLegacyPool").textContent = tplp || "0.0";
+        let tc = member.totalContribution;
+        if(tc){
+            tc = "$"+member.totalContribution;
+        }
+        document.getElementById("totalContribution").textContent = tc || "0.0";
+        let per = member.percentageOfOwnership;
+        if(per){
+            per = member.percentageOfOwnership+"%";
+        }
+        document.getElementById("percentageOfOwnership").textContent = per || "0.0";
+
+        const memberName = document.getElementById("memberName").textContent.trim();
+        if (!memberName) {
+            document.getElementById("memberDetailsSection").style.display = "none";
+            document.getElementById("superAdminDetails").textContent = "This is a super admin role, no individual details to display here.";
+        }
+        document.getElementById("btn-edit").innerHTML = `<a class="btn btn-outline-success" href="/html/profile.html">Edit</a>`;
+        if(member.maritalStatus==='Single'){
+            document.getElementById("spouse-div").style.display = "none";
+        }
+    }
+}
+
+function loadBeneficiaries(grantorId) {
+    if(!grantorId){
+        grantorId = member.memberId;
+    }
+    if (!grantorId) {
+        showErrorModal("Please enter a grantor ID.");
+        return;
+    }
+
+    fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`)
+        .then(response => {
+        if (!response.ok) throw new Error("Failed to fetch beneficiaries.");
+        return response.json();
+    })
+        .then(data => {
+        localStorage.setItem("beneficiaries", JSON.stringify(data));
+        window.location.href = "/html/beneficiarylist.html";
+    })
+        .catch(error => {
+        console.error(error);
+        showErrorModal("Could not load beneficiaries.");
+    });
+}
+
+function loadSpouse(grantorId) {
+    if(!grantorId){
+        grantorId = member.memberId;
+    }
+    if (!grantorId) {
+        showErrorModal("Please enter a grantor ID.");
+        return;
+    }
+
+    fetch(`/api/v1/members/user/retrieve-spouse/${grantorId}`)
+        .then(response => {
+        if (!response.ok) throw new Error("Failed to fetch spouse.");
+        return response.json();
+    })
+        .then(data => {
+        localStorage.setItem("spouse", JSON.stringify(data));
+        window.location.href = "/html/spouseview.html";
+    })
+        .catch(error => {
+        console.error(error);
+        showErrorModal("Could not load spouse.");
+    });
+}
+
+function diplayMembers(){
+    fetch("/api/v1/members/admin",{
+        method: "GET",
+        credentials: "include"
+    })
+        .then(res =>res.json())
+        .then(data => {
+        const tbody = document.querySelector("#memberTable tbody");
+        data.forEach(member => {
+            const row = `<tr>
+                            <td>
+                                <a href="#" class="member-link" data-id="${member.memberId}">${member.memberId}<span class="arrow">&#9660;</span> </a>
+                                <div class="dropdown tbl-dd" id="dropdown-${member.memberId}" style="display: none; margin-top: 5px;">
+                                  ${member.maritalStatus === 'Married' ? `<a href="#" onclick="loadSpouse('${member.memberId}')">Spouse</a><br/>` : ''}
+                                  <a href="#" onclick="loadBeneficiaries('${member.memberId}')">Beneficiaries</a></br>
+                                  <a href="#" onclick="editMember('${member.memberId}')">✏️ Edit</a></br>
+                                  <a href="#" onclick="deleteMember('${member.memberId}')">🗑️ Delete</a>
+                                </div>
+                            </td>
+                            <td>${member.fullName}</td>
+                            <td>${member.maritalStatus}</td>
+                            <td>${member.email || "-"}</td>
+                            <td>${member.joinDate}</td>
+                            <td>${member.leaveDate || "-"}</td>
+                            <td>${member.membershipStatus}</td>
+                            <td>${member.totalContribution}</td>
+                            <td>${member.totalPreviousLegacyPool || "0.0"}</td>
+                            <td>${member.percentageOfOwnership}</td>
+                            <td>${member.statusChangeDate || "-"}</td>
+                            <td>${member.statusChanged ? "Yes" : "No"}</td>
+                        </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        document.querySelector("#memberTable tbody").addEventListener("click", function (e) {
+            if (e.target.classList.contains("member-link") || e.target.closest(".member-link")) {
+                e.preventDefault();
+
+                const link = e.target.closest(".member-link");
+                const memberId = link.dataset.id;
+                const dropdown = document.getElementById("dropdown-" + memberId);
+                const arrow = link.querySelector(".arrow");
+
+                // Hide all dropdowns and reset arrows
+                document.querySelectorAll(".dropdown").forEach(el => {
+                    if (el !== dropdown) el.style.display = "none";
+                });
+                document.querySelectorAll(".arrow").forEach(a => a.classList.remove("expanded"));
+
+                // Toggle this one
+                const isVisible = dropdown.style.display === "block";
+                dropdown.style.display = isVisible ? "none" : "block";
+
+                document.addEventListener("click", function (e) {
+                    if (!e.target.classList.contains("member-link")) {
+                        document.querySelectorAll(".dropdown").forEach(el => el.style.display = "none");
+                    }
+                });
+            }
+        });
+    });
+}
+
+function editMember(memberId) {
+    fetch(`/api/v1/members/user/retrieve/${memberId}`,{
+        method:"GET",
+        credentials: "include"
+    })
+        .then(res => {
+        if (!res.ok) throw new Error("Failed to fetch member data");
+        return res.json();
+    })
+        .then(member => {
+        localStorage.setItem("editMember", JSON.stringify(member));
+        window.location.href = "/html/update.html";
+    })
+        .catch(error => {
+        error => showErrorModal(error.message || "An unexpected error occurred.")
+    });
+}
+
+function deleteMember(memberId) {
+    showConfirmation("Are you sure you want to delete this member?", () => {
+        fetch(`/api/v1/members/admin/delete/${memberId}`, {
+            method: 'DELETE',
+            credentials: "include"
+        })
+            .then(res => {
+            if (res.ok) {
+                showErrorModal("Member deleted.");
+                location.reload();
+            } else {
+                return res.text().then(errorMessage => {
+                    throw new Error(errorMessage || "Unknown error occurred");
+                });
+            }
+        })
+            .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
+    });
+}

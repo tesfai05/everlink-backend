@@ -3,210 +3,213 @@
     <head>
         <meta charset="UTF-8">
         <title>Member List</title>
-        <style>
-            body {
-              font-family: Arial, sans-serif;
-              background: #f4f4f4;
-              padding: 30px;
-              margin: 0;
-            }
-            .container {
-              max-width: 95%;
-              margin: auto;
-              padding: 20px;
-              background: #fff;
-              border-radius: 8px;
-              box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }
-            .container > h4 {
-              text-align: center;
-              margin-bottom: 25px;
-              color: #5694d7;
-            }
-            .table-wrapper {
-              overflow-x: auto;
-            }
+<!--        <style>-->
+<!--            body {-->
+<!--              font-family: Arial, sans-serif;-->
+<!--              background: #f4f4f4;-->
+<!--              padding: 30px;-->
+<!--              margin: 0;-->
+<!--            }-->
+<!--            .container {-->
+<!--              max-width: 95%;-->
+<!--              margin: auto;-->
+<!--              padding: 20px;-->
+<!--              background: #fff;-->
+<!--              border-radius: 8px;-->
+<!--              box-shadow: 0 2px 10px rgba(0,0,0,0.1);-->
+<!--            }-->
+<!--            .container > h4 {-->
+<!--              text-align: center;-->
+<!--              margin-bottom: 25px;-->
+<!--              color: #5694d7;-->
+<!--            }-->
+<!--            .table-wrapper {-->
+<!--              overflow-x: auto;-->
+<!--            }-->
 
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-              min-width: 1000px;
-            }
+<!--            table {-->
+<!--              width: 100%;-->
+<!--              border-collapse: collapse;-->
+<!--              margin-top: 20px;-->
+<!--              min-width: 1000px;-->
+<!--            }-->
 
-            th, td {
-              padding: 12px 15px;
-              text-align: center;
-              border: 1px solid #ddd;
-            }
+<!--            th, td {-->
+<!--              padding: 12px 15px;-->
+<!--              text-align: center;-->
+<!--              border: 1px solid #ddd;-->
+<!--            }-->
 
-            th {
-              background-color: #7c8691;
-              color: #fff;
-              font-size: 14px;
-              white-space: nowrap;
-            }
+<!--            th {-->
+<!--              background-color: #7c8691;-->
+<!--              color: #fff;-->
+<!--              font-size: 14px;-->
+<!--              white-space: nowrap;-->
+<!--            }-->
 
-            td {
-              font-size: 13px;
-              white-space: nowrap;
-            }
+<!--            td {-->
+<!--              font-size: 13px;-->
+<!--              white-space: nowrap;-->
+<!--            }-->
 
-            tr:nth-child(even) {
-              background-color: #f9f9f9;
-            }
+<!--            tr:nth-child(even) {-->
+<!--              background-color: #f9f9f9;-->
+<!--            }-->
 
-            tr:hover {
-              background-color: #f1f1f1;
-            }
+<!--            tr:hover {-->
+<!--              background-color: #f1f1f1;-->
+<!--            }-->
 
-            .action-buttons {
-              display: flex;
-              justify-content: space-between;
-              margin-top: 25px;
-              gap: 10px;
-              flex-wrap: wrap;
-            }
+<!--            .action-buttons {-->
+<!--              display: flex;-->
+<!--              justify-content: space-between;-->
+<!--              margin-top: 25px;-->
+<!--              gap: 10px;-->
+<!--              flex-wrap: wrap;-->
+<!--            }-->
 
-            .action-buttons button {
-              padding: 10px 16px;
-              font-size: 14px;
-              background-color: #516e8e;
-              color: white;
-              border: none;
-              border-radius: 5px;
-              cursor: pointer;
-            }
+<!--            .action-buttons button {-->
+<!--              padding: 10px 16px;-->
+<!--              font-size: 14px;-->
+<!--              background-color: #516e8e;-->
+<!--              color: white;-->
+<!--              border: none;-->
+<!--              border-radius: 5px;-->
+<!--              cursor: pointer;-->
+<!--            }-->
 
-            .action-buttons button:hover {
-              background-color: #069ff1;
-            }
+<!--            .action-buttons button:hover {-->
+<!--              background-color: #069ff1;-->
+<!--            }-->
 
-            .modal {
-                display: none;
-                position: fixed;
-                z-index: 9999;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0,0,0,0.4);
-            }
+<!--            .modal {-->
+<!--                display: none;-->
+<!--                position: fixed;-->
+<!--                z-index: 9999;-->
+<!--                left: 0;-->
+<!--                top: 0;-->
+<!--                width: 100%;-->
+<!--                height: 100%;-->
+<!--                background-color: rgba(0,0,0,0.4);-->
+<!--            }-->
 
-            .modal-content {
-                background-color: #fff;
-                margin: 15% auto;
-                padding: 20px 30px;
-                border-radius: 8px;
-                width: 80%;
-                max-width: 500px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-                text-align: center;
-            }
+<!--            .modal-content {-->
+<!--                background-color: #fff;-->
+<!--                margin: 15% auto;-->
+<!--                padding: 20px 30px;-->
+<!--                border-radius: 8px;-->
+<!--                width: 80%;-->
+<!--                max-width: 500px;-->
+<!--                box-shadow: 0 4px 10px rgba(0,0,0,0.3);-->
+<!--                text-align: center;-->
+<!--            }-->
 
-            .close-btn {
-                float: right;
-                font-size: 24px;
-                font-weight: bold;
-                cursor: pointer;
-                color: #aaa;
-            }
+<!--            .close-btn {-->
+<!--                float: right;-->
+<!--                font-size: 24px;-->
+<!--                font-weight: bold;-->
+<!--                cursor: pointer;-->
+<!--                color: #aaa;-->
+<!--            }-->
 
-            .close-btn:hover {
-                color: #000;
-            }
+<!--            .close-btn:hover {-->
+<!--                color: #000;-->
+<!--            }-->
 
-            /* Modal background */
-            #confirmModal {
-                position: fixed;
-                z-index: 9999;
-                left: 0; top: 0;
-                width: 100%; height: 100%;
-                background-color: rgba(0,0,0,0.6);
-                display: none;
-            }
-            .modal-content {
-                background: #fff;
-                padding: 20px;
-                width: 300px;
-                margin: 15% auto;
-                border-radius: 8px;
-                text-align: center;
-                box-shadow: 0 0 10px rgba(0,0,0,0.25);
-            }
-            .modal-buttons button {
-                margin: 10px;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-            }
-            .confirm-btn { background: #28a745; color: white; }
-            .cancel-btn { background: #dc3545; color: white; }
+<!--            /* Modal background */-->
+<!--            #confirmModal {-->
+<!--                position: fixed;-->
+<!--                z-index: 9999;-->
+<!--                left: 0; top: 0;-->
+<!--                width: 100%; height: 100%;-->
+<!--                background-color: rgba(0,0,0,0.6);-->
+<!--                display: none;-->
+<!--            }-->
+<!--            .modal-content {-->
+<!--                background: #fff;-->
+<!--                padding: 20px;-->
+<!--                width: 300px;-->
+<!--                margin: 15% auto;-->
+<!--                border-radius: 8px;-->
+<!--                text-align: center;-->
+<!--                box-shadow: 0 0 10px rgba(0,0,0,0.25);-->
+<!--            }-->
+<!--            .modal-buttons button {-->
+<!--                margin: 10px;-->
+<!--                padding: 8px 16px;-->
+<!--                border: none;-->
+<!--                border-radius: 4px;-->
+<!--                cursor: pointer;-->
+<!--            }-->
+<!--            .confirm-btn { background: #28a745; color: white; }-->
+<!--            .cancel-btn { background: #dc3545; color: white; }-->
 
-            .arrow {
-                display: inline-block;
-                transition: transform 0.2s ease;
-                margin-right: 5px;
-            }
+<!--            .arrow {-->
+<!--                display: inline-block;-->
+<!--                transition: transform 0.2s ease;-->
+<!--                margin-right: 5px;-->
+<!--            }-->
 
-            .dropdown {
-                display: none;
-                text-align: left;
-                margin-left: 20px; /* ⬅️ indentation */
-                margin-top: 5px;
-                padding-left: 15px;
-                border-left: 2px solid #ccc;
-            }
-            .dropdown a {
-                display: block;
-                color: #007bff;
-                text-decoration: none;
-                margin: 3px 0;
-            }
-            .dropdown a:hover {
-                text-decoration: underline;
-            }
-            .dropdown a::before {
-                content: "↳ ";
-                color: #888;
-            }
-            @media screen and (max-width: 600px) {
-                .container {
-                    padding: 20px;
-                }
-            }
-            /* Navbar styling */
-            .navbar {
-                background-color: #516e8e;
-            }
-            .navbar .nav-link {
-                color: white !important;
-            }
-            .navbar .nav-link:hover,
-            .navbar .dropdown-item:hover {
-                background-color: #069ff1;
-            }
-            /* Dropdown menu colors */
-            .navbar .dropdown-menu {
-                background-color: #516e8e;
-            }
-            .navbar .dropdown-item {
-                color: white !important;
-            }
-            .navbar-nav {
-                overflow: visible !important;
-                flex-direction: row;
-                flex-wrap: nowrap;
-                -webkit-overflow-scrolling: touch;
-            }
-            .navbar-nav .nav-item {
-                flex: 0 0 auto;
-            }
-            .navbar-collapse {
-                overflow: visible !important;
-            }
-        </style>
+<!--            .dropdown {-->
+<!--                display: none;-->
+<!--                text-align: left;-->
+<!--                margin-left: 20px; /* ⬅️ indentation */-->
+<!--                margin-top: 5px;-->
+<!--                padding-left: 15px;-->
+<!--                border-left: 2px solid #ccc;-->
+<!--            }-->
+<!--            .dropdown a {-->
+<!--                display: block;-->
+<!--                color: #007bff;-->
+<!--                text-decoration: none;-->
+<!--                margin: 3px 0;-->
+<!--            }-->
+<!--            .dropdown a:hover {-->
+<!--                text-decoration: underline;-->
+<!--            }-->
+<!--            .dropdown a::before {-->
+<!--                content: "↳ ";-->
+<!--                color: #888;-->
+<!--            }-->
+<!--            @media screen and (max-width: 600px) {-->
+<!--                .container {-->
+<!--                    padding: 20px;-->
+<!--                }-->
+<!--            }-->
+<!--            /* Navbar styling */-->
+<!--            .navbar {-->
+<!--                background-color: #516e8e;-->
+<!--            }-->
+<!--            .navbar .nav-link {-->
+<!--                color: white !important;-->
+<!--            }-->
+<!--            .navbar .nav-link:hover,-->
+<!--            .navbar .dropdown-item:hover {-->
+<!--                background-color: #069ff1;-->
+<!--            }-->
+<!--            /* Dropdown menu colors */-->
+<!--            .navbar .dropdown-menu {-->
+<!--                background-color: #516e8e;-->
+<!--            }-->
+<!--            .navbar .dropdown-item {-->
+<!--                color: white !important;-->
+<!--            }-->
+<!--            .navbar-nav {-->
+<!--                overflow: visible !important;-->
+<!--                flex-direction: row;-->
+<!--                flex-wrap: nowrap;-->
+<!--                -webkit-overflow-scrolling: touch;-->
+<!--            }-->
+<!--            .navbar-nav .nav-item {-->
+<!--                flex: 0 0 auto;-->
+<!--            }-->
+<!--            .navbar-collapse {-->
+<!--                overflow: visible !important;-->
+<!--            }-->
+<!--        </style>-->
+
+        <link rel="stylesheet" href="../css/common.css">
+        <link rel="stylesheet" href="../css/list.css">
         <!-- Bootstrap CSS -->
         <link
                 href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
@@ -298,7 +301,7 @@
 
         <!-- Confirmation Modal -->
         <div id="confirmModal" style="display: none;">
-            <div class="modal-content">
+            <div class="confirm-modal-content">
                 <p id="confirmMessage">Are you sure?</p>
                 <div class="modal-buttons">
                     <button class="confirm-btn" id="confirmYes">Yes</button>
@@ -306,289 +309,8 @@
                 </div>
             </div>
         </div>
-        <script>
-            //Timeout
-            let logoutTimer;
-            const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 min
-
-            function resetTimer() {
-                clearTimeout(logoutTimer);
-                logoutTimer = setTimeout(() => {
-                    localStorage.removeItem("user");
-                    showErrorModal("You have been logged out due to inactivity.");
-                    window.location.href = "/html/signin.html";
-                }, INACTIVITY_LIMIT);
-            }
-
-            //COMMON
-            const user = JSON.parse(localStorage.getItem("user"));
-            const member = JSON.parse(localStorage.getItem("member"));
-
-            // Define role-based restrictions
-            const restrictedForNone = [
-                "/html/register.html", "/html/list.html", "/html/email.html",
-                "/html/admin.html", "/html/memberDetails.html", "/html/spouse.html",
-                "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
-            ];
-            const restrictedForUser = [
-                "/html/register.html", "/html/list.html", "/html/email.html",
-                "/html/admin.html", "/html/signup.html", "/html/signin.html"
-            ];
-            const restrictedForAdmin = [
-                "/html/signup.html", "/html/signin.html"
-            ];
-
-            const restrictedForSuperAdmin = [
-                "/html/signup.html", "/html/signin.html", "/html/memberDetails.html",
-                "/html/spouse.html", "/html/beneficiary.html", "/html/spouseview.html", "/html/beneficiarylist.html"
-            ];
-
-            // Get role safely
-            const role = user?.roles?.[0]?.name?.toUpperCase() || null;
-
-            // Choose restriction list
-            function getRestrictedLinks(role) {
-                if (role === "SUPER_ADMIN") return restrictedForSuperAdmin;
-                if (role === "ADMIN") return restrictedForAdmin;
-                if (role === "USER") return restrictedForUser;
-                return restrictedForNone;
-            }
-            const restrictedList = getRestrictedLinks(role);
-
-            // Hide restricted links in the navbar
-            const navLinks = document.querySelectorAll(".navbar-nav a");
-
-            navLinks.forEach(link => {
-                const href = link.getAttribute("href");
-                if (!href) return;
-
-                const path = new URL(href, window.location.origin).pathname;
-
-                if (restrictedList.includes(path)) {
-                    const li = link.closest("li.nav-item");
-                    if (li) li.style.display = "none";
-                    else link.style.display = "none";
-                }
-            });
-
-            // Show/Hide Logout and Refresh Record links
-            const logoutLink = document.getElementById("logout-link");
-            const refreshLink = document.getElementById("refresh-record");
-
-            if (logoutLink) {
-                logoutLink.classList.toggle("d-none", !(role === "USER" || role === "ADMIN" || role === "SUPER_ADMIN"));
-            }
-
-            if (refreshLink) {
-                refreshLink.classList.toggle("d-none", (role !== "ADMIN" || role === "SUPER_ADMIN"));
-            }
-
-            function logout() {
-                fetch("/api/v1/members/public/logout", {
-                    method: "POST",
-                    credentials: "include"
-                }).then(() => {
-                    localStorage.removeItem("user"); // Clear user info from localStorage
-                    window.location.href = "/index.html"; // Redirect to home
-                }).catch(err => console.error("Logout failed:", err));
-            }
-
-            fetch("/api/v1/members/admin",{
-                method: "GET",
-                credentials: "include"
-            })
-            .then(res =>res.json())
-            .then(data => {
-                    const tbody = document.querySelector("#memberTable tbody");
-                    data.forEach(member => {
-                        const row = `<tr>
-                            <td>
-                                <a href="#" class="member-link" data-id="${member.memberId}">${member.memberId}<span class="arrow">&#9660;</span> </a>
-                                <div class="dropdown" id="dropdown-${member.memberId}" style="display: none; margin-top: 5px;">
-                                  ${member.maritalStatus === 'Married' ? `<a href="#" onclick="loadSpouse('${member.memberId}')">Spouse</a><br/>` : ''}
-                                  <a href="#" onclick="loadBeneficiaries('${member.memberId}')">Beneficiaries</a></br>
-                                  <a href="#" onclick="editMember('${member.memberId}')">✏️ Edit</a></br>
-                                  <a href="#" onclick="deleteMember('${member.memberId}')">🗑️ Delete</a>
-                                </div>
-                            </td>
-                            <td>${member.fullName}</td>
-                            <td>${member.maritalStatus}</td>
-                            <td>${member.email || "-"}</td>
-                            <td>${member.joinDate}</td>
-                            <td>${member.leaveDate || "-"}</td>
-                            <td>${member.membershipStatus}</td>
-                            <td>${member.totalContribution}</td>
-                            <td>${member.totalPreviousLegacyPool || "0.0"}</td>
-                            <td>${member.percentageOfOwnership}</td>
-                            <td>${member.statusChangeDate || "-"}</td>
-                            <td>${member.statusChanged ? "Yes" : "No"}</td>
-                        </tr>`;
-                        tbody.innerHTML += row;
-                    });
-
-                    document.querySelector("#memberTable tbody").addEventListener("click", function (e) {
-                        if (e.target.classList.contains("member-link") || e.target.closest(".member-link")) {
-                            e.preventDefault();
-
-                            const link = e.target.closest(".member-link");
-                            const memberId = link.dataset.id;
-                            const dropdown = document.getElementById("dropdown-" + memberId);
-                            const arrow = link.querySelector(".arrow");
-
-                            // Hide all dropdowns and reset arrows
-                            document.querySelectorAll(".dropdown").forEach(el => {
-                                if (el !== dropdown) el.style.display = "none";
-                            });
-                            document.querySelectorAll(".arrow").forEach(a => a.classList.remove("expanded"));
-
-                            // Toggle this one
-                            const isVisible = dropdown.style.display === "block";
-                            dropdown.style.display = isVisible ? "none" : "block";
-
-                            document.addEventListener("click", function (e) {
-                                if (!e.target.classList.contains("member-link")) {
-                                    document.querySelectorAll(".dropdown").forEach(el => el.style.display = "none");
-                                }
-                            });
-                        }
-                    });
-            });
-
-            function editMember(memberId) {
-                fetch(`/api/v1/members/user/retrieve/${memberId}`,{
-                    method:"GET",
-                    credentials: "include"
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error("Failed to fetch member data");
-                    return res.json();
-                })
-                .then(member => {
-                    localStorage.setItem("editMember", JSON.stringify(member));
-                    window.location.href = "/html/update.html";
-                })
-                .catch(error => {
-                    error => showErrorModal(error.message || "An unexpected error occurred.")
-                });
-            }
-
-            function deleteMember(memberId) {
-                showConfirmation("Are you sure you want to delete this member?", () => {
-                    fetch(`/api/v1/members/admin/delete/${memberId}`, {
-                        method: 'DELETE',
-                        credentials: "include"
-                    })
-                        .then(res => {
-                        if (res.ok) {
-                            showErrorModal("Member deleted.");
-                            location.reload();
-                        } else {
-                            return res.text().then(errorMessage => {
-                                throw new Error(errorMessage || "Unknown error occurred");
-                            });
-                        }
-                    })
-                        .catch(error => showErrorModal(error.message || "An unexpected error occurred."));
-                });
-            }
-
-            function loadBeneficiaries(grantorId) {
-                grantorId = grantorId.trim();
-                if (!grantorId) {
-                    showErrorModal("Please enter a grantor ID.");
-                    return;
-                }
-
-                fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`)
-                    .then(response => {
-                    if (!response.ok) throw new Error("Failed to fetch beneficiaries.");
-                    return response.json();
-                })
-                .then(data => {
-                    localStorage.setItem("beneficiaries", JSON.stringify(data));
-                    window.location.href = "/html/beneficiarylist.html";
-                })
-                .catch(error => {
-                    console.error(error);
-                    showErrorModal("Could not load beneficiaries.");
-                });
-            }
-
-            function loadSpouse(grantorId) {
-                grantorId = grantorId.trim();
-                if (!grantorId) {
-                    showErrorModal("Please enter a grantor ID.");
-                    return;
-                }
-
-                fetch(`/api/v1/members/user/retrieve-spouse/${grantorId}`)
-                    .then(response => {
-                    if (!response.ok) throw new Error("Failed to fetch spouse.");
-                    return response.json();
-                })
-                    .then(data => {
-                    localStorage.setItem("spouse", JSON.stringify(data));
-                    window.location.href = "/html/spouseview.html";
-                })
-                    .catch(error => {
-                    console.error(error);
-                    showErrorModal("Could not load spouse.");
-                });
-            }
-
-            function refreshRecord(){
-                fetch("/api/v1/members/admin/refresh-record", {
-                    method: "GET",
-                    credentials: "include"
-                }).then(() => {
-                    window.location.href = "/html/list.html";
-                }).catch(err => console.error("Refresh record failed:", err));
-            }
-            // Inject footer
-            fetch("/html/footer.html")
-                .then(res => res.text())
-                .then(data => document.getElementById("footer").innerHTML = data);
-            //Error Modal
-            function showErrorModal(message) {
-                const modal = document.getElementById("errorModal");
-                const messageBox = document.getElementById("errorMessage");
-                messageBox.textContent = message;
-                modal.style.display = "block";
-            }
-
-            function closeErrorModal() {
-                document.getElementById("errorModal").style.display = "none";
-            }
-
-            // Optional: Close modal on outside click
-            window.onclick = function(event) {
-                const modal = document.getElementById("errorModal");
-                if (event.target === modal) {
-                    modal.style.display = "none";
-                }
-            };
-
-            function showConfirmation(message, onConfirm) {
-                document.getElementById("confirmMessage").textContent = message;
-                const confirmModal = document.getElementById("confirmModal");
-                confirmModal.style.display = "block";
-
-                const confirmYesBtn = document.getElementById("confirmYes");
-
-                // Remove previous event listeners
-                const newBtn = confirmYesBtn.cloneNode(true);
-                confirmYesBtn.parentNode.replaceChild(newBtn, confirmYesBtn);
-
-                newBtn.onclick = () => {
-                    closeModal();
-                    onConfirm();
-                };
-            }
-
-            function closeModal() {
-                document.getElementById("confirmModal").style.display = "none";
-            }
-        </script>
+        <script src="../js/common.js"></script>
+        <script>diplayMembers();</script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
     </body>
