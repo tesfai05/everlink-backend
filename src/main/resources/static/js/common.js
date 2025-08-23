@@ -98,7 +98,7 @@ function getRestrictedLinks(role) {
 
 
 function logout() {
-    fetch("/api/v1/members/public/logout", {
+    fetch("/api/v1/public/logout", {
         method: "POST",
         credentials: "include"
     }).then(() => {
@@ -148,7 +148,7 @@ function setupMakeAdminForm() {
             username: document.getElementById("username").value
         };
 
-        fetch("/api/v1/members/admin/update-user", {
+        fetch("/api/v1/users/admin/update", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -179,7 +179,7 @@ function setupChangePasswordForm() {
             email: document.getElementById("email").value
         };
 
-        fetch("/api/v1/members/public/change-password", {
+        fetch("/api/v1/public/change-password", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -207,7 +207,7 @@ function setupNotificationForm() {
             body: document.getElementById("body").value
         };
 
-        fetch("/api/v1/members/admin/email/send", {
+        fetch("/api/v1/members/admin/send-email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -272,7 +272,7 @@ function setupSigninForm() {
             password: document.getElementById("password").value
         };
 
-        fetch("/api/v1/members/public/signin", {
+        fetch("/api/v1/public/signin", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -319,7 +319,7 @@ function setupSigninForm() {
             return member;
         })
         .then(member => {
-            fetch(`/api/v1/members/user/retrieve-spouse/${member.memberId}`, {
+            fetch(`/api/v1/spouse/user/retrieve/${member.memberId}`, {
                 method: "GET",
                 credentials: "include"
             })
@@ -352,7 +352,7 @@ function setupSignupForm(){
             password: document.getElementById("password").value
         };
 
-        fetch("/api/v1/members/public/signup", {
+        fetch("/api/v1/public/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -393,7 +393,7 @@ function setupBeneficiaryForm(){
             grantorId: grantorId,
             beneficiaries: beneficiaries
         };
-        fetch("/api/v1/members/user/add-beneficiaries", {
+        fetch("/api/v1/beneficiaries/user/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -401,7 +401,7 @@ function setupBeneficiaryForm(){
         })
         .then(res => {
             if (res.ok) {
-                fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`, {
+                fetch(`/api/v1/beneficiaries/user/retrieve-member/${grantorId}`, {
                     method: "GET",
                     credentials: "include"
                 })
@@ -431,7 +431,7 @@ function setupBeneficiaryForm(){
 }
 
 function retrieveBeneficiaries(grantorId){
-    fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`)
+    fetch(`/api/v1/beneficiaries/user/retrieve-member/${grantorId}`)
     .then(response => {
         if (!response.ok) throw new Error("Failed to fetch beneficiaries.");
         return response.json();
@@ -534,7 +534,7 @@ function setupSpouseForm(){
             maritalStatus: document.getElementById('maritalStatus').value
         };
 
-        fetch("/api/v1/members/user/add-spouse", {
+        fetch("/api/v1/spouse/user/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -542,7 +542,7 @@ function setupSpouseForm(){
         })
         .then(res => {
             if (res.ok) {
-                fetch(`/api/v1/members/user/retrieve-spouse/${grantorId}`, {
+                fetch(`/api/v1/spouse/user/retrieve/${grantorId}`, {
                     method: "GET",
                     credentials: "include"
                 })
@@ -627,7 +627,7 @@ function editSpouseDetails(){
                 email: document.getElementById("email").value
             };
             try {
-                const res = await fetch(`/api/v1/members/user/spouse/${spouse.spouseId}`, {
+                const res = await fetch(`/api/v1/spouse/user/update/${spouse.spouseId}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updated)
@@ -656,7 +656,7 @@ function deleteSpouse(){
         }
     }
     showConfirmation("Are you sure you want to delete this spouse?", () => {
-        fetch(`/api/v1/members/user/spouse/${spouse.spouseId}`, {
+        fetch(`/api/v1/spouse/admin/delete/${spouse.spouseId}`, {
             method: 'DELETE',
             credentials: "include"
         })
@@ -698,7 +698,7 @@ function closeModal() {
 // Populate edit form with localStorage beneficiary data
 function editBeneficiary(id){
     try {
-        fetch(`/api/v1/members/user/beneficiaries/${id}`, {
+        fetch(`/api/v1/beneficiaries/user/retrieve/${id}`, {
             method: "GET",
             credentials: "include",
         })
@@ -722,7 +722,7 @@ function editBeneficiary(id){
 function deleteBeneficiary(id){
     const beneficiaries = JSON.parse(localStorage.getItem("beneficiaries"));
     showConfirmation("Are you sure you want to delete this beneficiary?", () => {
-        fetch(`/api/v1/members/user/beneficiaries/${id}`, {
+        fetch(`/api/v1/beneficiaries/user/delete/${id}`, {
             method: 'DELETE',
             credentials: "include"
         })
@@ -775,7 +775,7 @@ function renderBeneficiary(){
             const beneficiary = JSON.parse(stored);
 
             try {
-                const res = await fetch(`/api/v1/members/user/beneficiaries/${beneficiary.beneficiaryId}`, {
+                const res = await fetch(`/api/v1/beneficiaries/user/update/${beneficiary.beneficiaryId}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updated)
@@ -976,7 +976,7 @@ function loadBeneficiaries(grantorId) {
         return;
     }
 
-    fetch(`/api/v1/members/user/retrieve-beneficiaries/${grantorId}`)
+    fetch(`/api/v1/beneficiaries/user/retrieve-member/${grantorId}`)
         .then(response => {
         if (!response.ok) throw new Error("Failed to fetch beneficiaries.");
         return response.json();
@@ -1000,7 +1000,7 @@ function loadSpouse(grantorId) {
         return;
     }
 
-    fetch(`/api/v1/members/user/retrieve-spouse/${grantorId}`)
+    fetch(`/api/v1/spouse/user/retrieve/${grantorId}`)
         .then(response => {
         if (!response.ok) throw new Error("Failed to fetch spouse.");
         return response.json();

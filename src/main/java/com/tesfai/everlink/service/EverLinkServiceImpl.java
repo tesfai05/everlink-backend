@@ -259,6 +259,7 @@ public class EverLinkServiceImpl implements IEverLinkService{
            return "No member with id : "+memberId;
         }
         everLinkRepository.deleteByMemberId(memberId);
+        userRepository.deleteByMemberId(memberId);
         return "Member with id : "+memberId+" deleted.";
     }
 

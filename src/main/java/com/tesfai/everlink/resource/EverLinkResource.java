@@ -8,8 +8,6 @@ import com.tesfai.everlink.utils.EverLinkUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,17 +18,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/members")
+@RequestMapping("/api/v1/public")
 @CrossOrigin(origins = "*")
 public class EverLinkResource {
     private final IEverLinkService everLinkService;
@@ -43,13 +37,7 @@ public class EverLinkResource {
         this.authenticationManager = authenticationManager;
     }
 
-
-    @GetMapping("/admin")
-    public List<MemberDTO> getMembers(){
-        return everLinkService.getMembers();
-    }
-
-    @PostMapping("/public/signin")
+    @PostMapping("/signin")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletRequest httpRequest) {
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(userDTO.getUsername(), userDTO.getPassword());
@@ -74,7 +62,7 @@ public class EverLinkResource {
                     .body(Map.of("error", "Invalid username or password"));
         }
     }
-    @PostMapping("/public/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
         HttpSession session = request.getSession(false);
@@ -84,7 +72,7 @@ public class EverLinkResource {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
-    @PostMapping("/public/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody UserDTO userDTO){
         try {
             String username = userDTO.getUsername();
@@ -113,7 +101,7 @@ public class EverLinkResource {
         }
     }
 
-    @PostMapping("/public/change-password")
+    @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO){
         try {
             String memberId = userDTO.getMemberId();
@@ -146,246 +134,8 @@ public class EverLinkResource {
         }
     }
 
-    @PostMapping("/admin/update-user")
-    public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO){
-        try {
-            String memberId = userDTO.getMemberId();
-            //Check memberId is valid
-            List<String> memberIdList = everLinkService.getMembers().stream()
-                    .map(m -> m.getMemberId())
-                    .collect(Collectors.toList());
-            if(!memberIdList.contains(memberId)){
-                return ResponseEntity.badRequest().body("Invalid member ID.");
-            }
-            //check if member has account
-            MemberDTO memberDTO = everLinkService.retrieveMember(userDTO.getMemberId());
-            if(!memberDTO.getSignedUp()){
-                return ResponseEntity.badRequest().body("Member with ID "+userDTO.getMemberId()+" has no account.");
-            }
-
-            return ResponseEntity.ok(everLinkService.updateUser(userDTO));
-        }catch (Exception e){
-            return ResponseEntity.internalServerError().body("An unexpected error during update user occurred.");
-        }
-    }
-
-    @GetMapping("/admin/refresh-record")
-    public ResponseEntity<?> refreshRecord(){
-        everLinkService.refreshRecord();
-        return ResponseEntity.ok("Record refreshed.");
-    }
-
-    @PostMapping("/admin/register")
-    public ResponseEntity<?> registerMember(@RequestBody MemberDTO memberDTO){
-        try {
-            String joinDate = memberDTO.getJoinDate();
-            if(StringUtils.isBlank(joinDate)){
-                joinDate = EverLinkUtils.toString(LocalDate.now());
-            }
-            boolean isValid = EverLinkUtils.fromString(joinDate).isBefore(LocalDate.now()) ||  EverLinkUtils.fromString(joinDate).isEqual(LocalDate.now());
-            if (!isValid) {
-                return ResponseEntity.badRequest().body("Join date must not be in the future.");
-            }
-            String fullName = memberDTO.getFullName().replaceAll("\\s+", " ");
-            String[] name = fullName.split("\s");
-            if(name!=null && name.length<2){
-                ErrorDTO errorDTO = new ErrorDTO(
-                        "400",
-                        "First name and Last name are required."
-                );
-                return ResponseEntity.badRequest().body(errorDTO);
-            }
-            memberDTO.setFullName(fullName);
-            return ResponseEntity.ok(everLinkService.registerMember(memberDTO));
-        }catch (DateTimeParseException e){
-            return ResponseEntity.badRequest().body("Invalid join date format. Please use MM/dd/yyyy.");
-        }
-    }
-
-    @PostMapping("/user/update/{memberId}")
-    public ResponseEntity<?> updateMember(@PathVariable String memberId, @RequestBody MemberDTO memberDTO){
-        try {
-            String fullName = memberDTO.getFullName().replaceAll("\\s+", " ");
-            String[] name = fullName.split("\s");
-            if(name!=null && name.length<2){
-                return ResponseEntity.badRequest().body("First name and Last name are required.");
-            }
-            LocalDate now = LocalDate.now();
-            LocalDate joinDate = EverLinkUtils.fromString(memberDTO.getJoinDate());
-            LocalDate leaveDate = EverLinkUtils.fromString(memberDTO.getLeaveDate());
-            LocalDate statusChangeDate = EverLinkUtils.fromString(memberDTO.getStatusChangeDate());
-
-            // Rule 1: Dates must not be in the future
-            if (joinDate != null && joinDate.isAfter(now)) {
-                return ResponseEntity.badRequest().body("Join date cannot be in the future.");
-            }
-            if (leaveDate != null && leaveDate.isAfter(now)) {
-                return ResponseEntity.badRequest().body("Leave date cannot be in the future.");
-            }
-            if (statusChangeDate != null && statusChangeDate.isAfter(now)) {
-                return ResponseEntity.badRequest().body("Status change date cannot be in the future.");
-            }
-
-            // Rule 2: Leave date must be after join date
-            if (joinDate != null && leaveDate != null && leaveDate.isBefore(joinDate)) {
-                return ResponseEntity.badRequest().body("Leave date cannot be before join date.");
-            }
-
-            // Rule 3: Leave date must be after status change date
-            if (leaveDate != null && statusChangeDate != null && statusChangeDate.isBefore(leaveDate)) {
-                return ResponseEntity.badRequest().body("Leave date cannot be before status change date.");
-            }
-
-            // Rule 4: Status change date must be after join date
-            if (joinDate != null && statusChangeDate != null && statusChangeDate.isBefore(joinDate)) {
-                return ResponseEntity.badRequest().body("Status change date cannot be before join date.");
-            }
-
-            // Passes all validations
-            return ResponseEntity.ok(everLinkService.updateMember(memberId, memberDTO));
-
-        } catch (DateTimeParseException e) {
-            return ResponseEntity.badRequest().body("Invalid date format. Please use MM/dd/yyyy.");
-        }
-
-    }
-
-    @DeleteMapping("/admin/delete/{memberId}")
-    public String deleteMember(@PathVariable String memberId){
-        return everLinkService.deleteMember(memberId);
-    }
-
-    @DeleteMapping("/admin/delete")
-    public String deleteMemberAll(){
-        return everLinkService.deleteMember();
-    }
-
-    @GetMapping("/admin/reset")
-    public String  resetData(){
-        return everLinkService.resetData();
-    }
-
-    @PostMapping("/admin/email/send")
-    public String sendEmailToAllMembers( @RequestBody EmailDTO emailDTO) {
-        emailService.sendEmailToMembers(emailDTO.getSubject(), emailDTO.getBody());
-        return "Email sent to members";
-    }
-
-    @GetMapping("/public/health-check")
+    @GetMapping("/health-check")
     public String  healthCheck(){
         return "APPISUPNOW";
-    }
-
-
-    @GetMapping("/user/retrieve/{memberId}")
-    public ResponseEntity<?>  retrieveMember(@PathVariable String  memberId){
-        return ResponseEntity.ok(everLinkService.retrieveMember(memberId));
-    }
-
-    @PostMapping("/user/add-beneficiaries")
-    public ResponseEntity<?> addBeneficiaries(@RequestBody BeneficiaryFormDTO beneficiaryFormDTO) {
-        for(BeneficiaryDTO beneficiaryDTO : beneficiaryFormDTO.getBeneficiaries()){
-            String fullName = beneficiaryDTO.getFullName().replaceAll("\\s+", " ");
-            String[] name = fullName.split("\s");
-            if(name!=null && name.length<2){
-                ErrorDTO errorDTO = new ErrorDTO(
-                        "400",
-                        "First name and Last name are required."
-                );
-                return ResponseEntity.badRequest().body(errorDTO);
-            }
-        }
-
-        //Check memberId is valid
-        String memberId = beneficiaryFormDTO.getGrantorId();
-        List<String> memberIdList = everLinkService.getMembers().stream()
-                .map(m -> m.getMemberId())
-                .collect(Collectors.toList());
-        if(!memberIdList.contains(memberId)){
-            return ResponseEntity.badRequest().body("Invalid grantor ID.");
-        }
-        everLinkService.addBeneficiaries(beneficiaryFormDTO);
-        return ResponseEntity.ok("Beneficiaries added successfully");
-    }
-
-    @GetMapping("/user/retrieve-beneficiaries/{grantorId}")
-    public ResponseEntity<?> retrieveBeneficiaries(@PathVariable String grantorId) {
-        //Check memberId is valid
-        List<String> memberIdList = everLinkService.getMembers().stream()
-                .map(m -> m.getMemberId())
-                .collect(Collectors.toList());
-        if(!memberIdList.contains(grantorId)){
-            return ResponseEntity.badRequest().body("Invalid grantor ID.");
-        }
-        List<BeneficiaryDTO> beneficiaries = everLinkService.retrieveBeneficiaries(grantorId);
-        return ResponseEntity.ok(beneficiaries);
-    }
-
-    @GetMapping("/user/beneficiaries/{beneficiaryId}")
-    public ResponseEntity<?>  retrieveBeneficiary(@PathVariable String  beneficiaryId){
-        return ResponseEntity.ok(everLinkService.retrieveBeneficiary(beneficiaryId));
-    }
-
-    @PutMapping("/user/beneficiaries/{beneficiaryId}")
-    public ResponseEntity<?>  updateBeneficiary(@RequestBody BeneficiaryDTO  beneficiaryDTO, @PathVariable String beneficiaryId){
-        return ResponseEntity.ok(everLinkService.updateBeneficiary(beneficiaryDTO, beneficiaryId));
-    }
-    @DeleteMapping("/user/beneficiaries/{beneficiaryId}")
-    public ResponseEntity<?>  removeBeneficiary(@PathVariable String  beneficiaryId){
-        everLinkService.removeBeneficiary(beneficiaryId);
-        return ResponseEntity.ok("Beneficiary removed successfully");
-    }
-
-    @PostMapping("/user/add-spouse")
-    public ResponseEntity<?> addSpouse(@RequestBody SpouseDTO spouseDTO) {
-        //Check memberId is valid
-        String memberId = spouseDTO.getGrantorId();
-        List<String> memberIdList = everLinkService.getMembers().stream()
-                .map(m -> m.getMemberId())
-                .collect(Collectors.toList());
-        if(!memberIdList.contains(memberId)){
-            return ResponseEntity.badRequest().body("Invalid grantor ID.");
-        }
-        String fullName = spouseDTO.getFullName().replaceAll("\\s+", " ");
-        String[] name = fullName.split("\s");
-        if(name!=null && name.length<2){
-            ErrorDTO errorDTO = new ErrorDTO(
-                    "400",
-                    "First name and Last name are required."
-            );
-            return ResponseEntity.badRequest().body(errorDTO);
-        }
-        try {
-            everLinkService.addSpouse(spouseDTO);
-        } catch (SQLIntegrityConstraintViolationException | DataIntegrityViolationException e) {
-            ErrorDTO errorDTO = new ErrorDTO(
-                    "500",
-                    "You have already added your spouse."
-            );
-           return ResponseEntity.internalServerError().body(errorDTO);
-        }
-        return ResponseEntity.ok("Spouse added successfully");
-    }
-
-    @GetMapping("/user/retrieve-spouse/{grantorId}")
-    public ResponseEntity<?> retrieveSpouse(@PathVariable String grantorId) {
-        //Check memberId is valid
-        List<String> memberIdList = everLinkService.getMembers().stream()
-                .map(m -> m.getMemberId())
-                .collect(Collectors.toList());
-        if(!memberIdList.contains(grantorId)){
-            return ResponseEntity.badRequest().body("Invalid grantor ID.");
-        }
-        SpouseDTO spouseDTO = everLinkService.retrieveSpouse(grantorId);
-        return ResponseEntity.ok(spouseDTO);
-    }
-    @PutMapping("/user/spouse/{spouseId}")
-    public ResponseEntity<?>  updateSpouse(@RequestBody SpouseDTO  spouseDTO, @PathVariable String spouseId){
-        return ResponseEntity.ok(everLinkService.updateSpouse(spouseDTO, spouseId));
-    }
-    @DeleteMapping("/user/spouse/{spouseId}")
-    public ResponseEntity<?>  deleteSpouse(@PathVariable String  spouseId){
-        everLinkService.deleteSpouse(spouseId);
-        return ResponseEntity.ok("Spouse deleted successfully");
     }
 }
