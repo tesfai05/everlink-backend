@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 "/html/footer.html",
                                 "html/unauthorized.html",
                                 "/html/forbidden.html",
-                                "/api/v1/members/public/**",
+                                "/api/v1/public/**",
                                 "/html/changePassword.html",
                                 "/docs/everlink_member_policy_tig.pdf",
                                 "/docs/everlink_member_policy_en.pdf"
